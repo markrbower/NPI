@@ -19,6 +19,9 @@ b_c <- function() {
     print( paste0( "cutoff: ", cutoff ) )
     print( value )
   }
+  print( system.time( value <- mean( igraph::betweenness( graph=grph ) ) ) )
+  print( paste0( "cutoff: full" ) )
+  print( value )
   sink()
   
 }
