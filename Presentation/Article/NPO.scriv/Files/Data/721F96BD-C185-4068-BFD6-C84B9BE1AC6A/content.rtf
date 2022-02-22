@@ -1,0 +1,53 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2513
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica-Bold;\f1\fswiss\fcharset0 Helvetica;\f2\fswiss\fcharset0 Helvetica-BoldOblique;
+\f3\fswiss\fcharset0 Helvetica-Oblique;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\sl288\slmult1\pardirnatural\qj\partightenfactor0
+
+\f0\b\fs36 \cf0 Background and Significance\
+
+\f1\b0\fs22 \
+\pard\tx720\fi720\pardirnatural\qj\partightenfactor0
+
+\fs28 \cf0 Despite variations in the physical mechanisms underlying signal generation (e.g., single neurons and summed field potentials) and physiological recording (e.g.,macroelectrodes and microwires), one invariant of pre-processing remains identifying temporally-bounded events, or \'93signals\'94 (e.g., action potentials, sharp-wave/ripple complexes (SWR), interictal spikes (IIS), neocortical spindles, sleep-related K-complexes). This differs from identifying temporally unbounded states (e.g., sleep stages, theta oscillations during exploration, \'93up\'94 or \'93down\'94 neocortical states).   Signal processing algorithms applied to electrophysiological data have long placed a high priority on both noise reduction and elimination at the start of processing. Historically, this arose both from limited computational power (which emphasized reducing the amount of data to be processed early in the processing stream) and from expensive data storage (which emphasized reducing storage requirements). Technological advances, however, have reduced the importance of these considerations, placing "Big Data" capabilities in the hands of individual researchers. This has allowed for the emergence of algorithms that replace idealized assumptions about data (e.g., Gaussian distributions) with computationally intensive approches that rely solely on the data, but few examples exist where these new capabilities have been utilized for extracellular signal processing.\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\qj\partightenfactor0
+\cf0 \
+Extracellular neural signal detection and clustering has continued to rely on classical optimization approaches, such as Maximum Likelihood Estimation, which assume underlying models consisting of ideal, analytic distributions such as a mixture-of-gaussians. Importantly, the field continues to rely on noise elimination as an early processing step, often ignoring the significant amount of information that could be utilized. This is particularly important in the analysis of electrophysiological data, because so much of what is recorded is noise. Consider a system that is recording action potentials from three different neurons that each have an average firing rate of 2 Hz. Given that the duration of an action potential is roughly 1 msec, then 6 msec of action potential waveforms will be recorded per second, leaving 994 msec of noise. The signal constitutes less than 1% of the recorded data, so noise elimination removes over 99% of the acquired data *as a first step* [human neuroprosthetics paper]! This is a significant loss of information, even if it is only noise. This is problematic in situations where the signal itself is known to change with time where there is no clear method to identify noise when the signal itself is changing. This includes common situations such as electrode drift, but also includes more complex situations such as bursts of action potentials with the accompanying decrement of recorded amplitude as the burst progresses and inter-ictal spikes (IIS) in epilepsy that are known to change following successive seizures.\
+\
+In addition, clustering algorithms have routinely relied on error minimization approaches [Duda and Hart]. These approaches were optimized for the strengths of computers, but are not inherently intuitive to humans, as is shown by the current methods used to teach physicians and neuroscientists to identify events of interest in electroencephalographic (EEG) recordings (i.e., to "read" EEG). Normally, recordings are observed over minutes or even hours, looking for events that share four properties: temporally-restricted, repeatable, rare and realistic. For example, sharp-wave/ripple complexes in rodent recordings are identified as brief (~100 msec), rare (<1 Hz) events that produce a characteristic (i.e., repeatable) sound over audio amplifiers without saturating those amplifiers (i.e., physiologically realistic). Trained observers reject both far more frequent, lower-amplitude background "noise" and far less frequent "artifacts" that often is often so large in amplitude as to be non-physiological (Figure 1). \
+\
+Other approaches have been less utilized. One such area is graphical/network methods that utilize connectivity to identify clusters (called "communities" in network analysis [Barabasi]). If the factors that govern connectivity are time-local, then clusters naturally become time-varying and thus les sensitive to time-varying factors such as drift. Can I use the capabilities of Scrivener to help with the algo-epilespy conundrum of the current mx? The main reason for combining the two is the fact that I know, going into my analysis, that the shape of IIS change prior to and following a seizure. This led to the desire for a means of identifying biological signals that did not rely solely on the shape of signals. 
+\f0\b The insight was the hypothesis that relationships
+\f1\b0  between signals generated by a given source (regardless of changes to the waveform) 
+\f0\b differ
+\f1\b0  from those generated by noise, which is assumed to come from multiple, overlapping, stochastic sources. \
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
+\cf0 The Iron Law of Noise: Low count. Small peak. Variable shape. This is as much a cultural or \'93belief\'94 principle as it is an objective one; people will not accept small, frequent and variable waveforms as signals. \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\qj\partightenfactor0
+\cf0 \
+What 
+\f2\i\b kind
+\f1\i0\b0  of \'93relationships\'94? This is a conceptual jump. It makes sense to me, because I have already examined the results of the analysis. Why would you build a graph of events and connect them by CC? Is there some evidence from graph theory that such networks can provide meaningful information? Why not use Granger Causality or some other \'93relatedness\'94 metric? What is special or powerful about graphs? I could add the properties of hubs to the hypothesis? That does seem reasonable: if signals arise from a single generator, then the sample closest to the \'93true\'94 signal will be central to the distribution of samples; whereas if noise arises from the summation of multiple sources, then no single sample should be more central to multiple centroids.\
+\
+So, two hypotheses: 1) The Law of Noise: Compared to signal, noise samples are more common, have lower amplitude and are less regular. The latter observation is true, because 2) signals arise from a single generator that will map to a single centroid, while noise arises from multiple, overlapping generators. Even if the observed properties of signal generators change with time (as is known for bursting, or \'93complex\'94 neurons), they will change in a systematic, repeated fashion. 
+\f0\b These hypotheses lead to the prediction that graphs of signal relatedness will be more hub-like.\
+
+\f1\b0 \
+The original goal of this project was to analyze IIS for a multi-year, multi-patient dataset obtained using the NeuroVista intracranial, ambulatory EEG recording system (Cook et al., XXXX). Given that our prior work has shown that seizures alter the shape and synchrony of IIS (Bower et al., 2017), artifact could be introduced into IIS detections algorithms that assume signal stationarity. To diminish this, we sought an algorithm that considered both temporally local signals (to identify similar waveforms) and global signals (to examine persistent changes to IIS shape and synchrony. We evaluated the performance of this algorithm on artificial data, as well as on real-world rodent and human data to reproduce known phenomena. Finally, we applied this algorithm to the NeuroVista dataset to determine whether seizure produce lasting changes to neural circuitry.\
+
+\f0\b \
+
+\f1\b0 If you know that the data contain non-stationary sources, any stationary model will overweight outliers.\
+
+\f0\b \
+
+\f1\b0 Notes on \'93clustering\'94 from Estivil-Castro (2002): \'93clustering is in the eye of the beholder.\'94  The variety of clustering algorithms reflects the variety of philosophical (yet fundamental) differences in \'91inductive principles\'92: \'93top-down\'94 is segmentation (about borders), while \'93bottom-up\'94 is about similarity (variance). \'93Inductive Principle\'94: that which discriminates one hypothesis over another given the same data set. \'93Expectation Maximization\'94 of the Maximum Likelihood is one such model. The inductive principle of EM is \'91pick the model (set of 
+\f3\i k
+\f1\i0  cluster centers) that minimizes the total squared error\'94, but the problem with \'93means\'94 and \'93squared error\'94 is that they are sensitive to outliers. Likewise, medians minimize total absolute error. Because these optimization problems are typically intractable for real-world problems, \'93the optimization problem is solved approximately\'94. Bonner (1964) stated \'93there cannot be a universal definition of a cluster and it is too late to impose one.\'94 IBM Journal of Research and Development, 8:22-32. \
+\
+\
+
+\f0\b \
+}

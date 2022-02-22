@@ -1,0 +1,63 @@
+singularity remote login
+# Create new access token https://cloud.sylabs.io/auth
+
+MySQL Container
+    mysql.def
+        Bootstrap: docker
+        From: mysql/mysql-server:latest
+
+        Stage: build
+
+        %environment
+            export MYSQL_DATABASE=testbed_results
+            export MYSQL_USER=npo_user
+            export MYSQL_PASSWORD=secret
+
+R Container
+    npo.def
+        Bootstrap: docker
+        From: rocker/r-ver:latest
+
+        Stage: build
+
+        %post
+            mkdir -p /home/analysis
+            apt-get update && apt-get install -y --no-install-recommends libmysqlclient-dev openjdk-11-jdk liblzma-dev libxml2 libglpk-dev libbz2-dev
+            Rscript -e "install.packages('rJava')"
+            Rscript -e "install.packages('DBI')"
+            Rscript -e "install.packages('RMySQL')"
+            Rscript -e "install.packages('devtools')"
+            Rscript -e "install.packages('rJava')"
+            Rscript -e "install.packages('Rcpp')"
+            Rscript -e "install.packages('here')"
+            Rscript -e "install.packages('GGally')"
+            Rscript -e "install.packages('ggnetwork')"
+            Rscript -e "install.packages('ggpubr')"
+            Rscript -e "install.packages('Rfast')"
+            Rscript -e "install.packages('reshape2')"
+            Rscript -e "install.packages('R6')"
+            Rscript -e "install.packages('uuid')"
+            Rscript -e "install.packages('R6P')"
+            Rscript -e "library(devtools)" -e "devtools::install_github('markrbower/SingletonsInR', subdir='Analysis/SingletonsInR',upgrade=c('always'),force=TRUE)"
+            Rscript -e "library(devtools)" -e "devtools::install_github('markrbower/topsecret', subdir='Analysis/topsecret',upgrade=c('always'),force=TRUE)"
+            Rscript -e "library(devtools)" -e "devtools::install_github('markrbower/topconnect', subdir='Analysis/topconnect',upgrade=c('always'),force=TRUE)"
+            Rscript -e "library(devtools)" -e "devtools::install_github('markrbower/topigraph', subdir='Analysis/topigraph',upgrade=c('always'),force=TRUE)"
+            Rscript -e "library(devtools)" -e "devtools::install_github('markrbower/meftools', subdir='Analysis/meftools',upgrade=c('always'),force=TRUE)"
+            Rscript -e "library(devtools)" -e "devtools::install_github('markrbower/NPO', subdir='Analysis/NPO',upgrade=c('always'),force=TRUE)"
+
+        %runscript
+            Rscript -e "library(NPO)" -e "NPO:::NPO_testbed( hostname='127.0.0.1', db_user='npo_user', password='secret', dbName='testbed_results' )"
+
+singularity build --remote mysql.sif mysql.def
+singularity build --remote npo.sif npo.def
+mkdir -p var_lib_mysql
+mkdir -p var_run_mysql
+mkdir -p var_lib_mysql-files
+
+Terminal 1:
+    singularity instance start --bind "${PWD}"/var_lib_mysql:/var/lib/mysql,"${PWD}"/var_run_mysql:/var/run/mysqld,"${PWD}"/var_lib_mysql-files:/var/lib/mysql-files mysql.sif mysql
+    singularity run instance://mysql
+
+Terminal 2:
+    DATA=$(readlink -f Data/Halo_data_from_Roni)
+    singularity run --bind ${DATA}:/data/Halo_data_from_Roni/ npo.sif

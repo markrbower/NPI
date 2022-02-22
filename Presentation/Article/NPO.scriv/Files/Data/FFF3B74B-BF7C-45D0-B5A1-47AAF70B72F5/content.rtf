@@ -1,0 +1,74 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2513
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica-Bold;\f1\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;\red54\green54\blue54;}
+{\*\expandedcolortbl;;\csgenericrgb\c21176\c21176\c21176;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\sl288\slmult1\pardirnatural\partightenfactor0
+
+\f0\b\fs36 \cf2 Abstract\
+\
+I. Algorithm (Network Parameter Outlier, NPO)\
+1. Shape of biological signals change with time, but algos rarely are designed to handle this.\
+2. Describe the algo\
+3. Test the algo\
+a. Rodent AP and ripples - seizures disrupt phase reac.\
+b. Human AP, ripples and IIS - look at paired ripples\
+4. *Signal clusters across scales are hubs\
+II. Application\
+1. NeuroVista data and IIS\
+2. SRC\
+3. Examples of persistent changes\
+4. *Necessity of post-seizure sleep\
+III. Do the main results co-inform?\
+hubs require sleep? \cf2 \ul \ulc2 This could be tested!\cf2 \ulnone \
+sleep is about hubs?\
+sleep forms/allows hubs?\
+can signals across the brain identify each other?\
+\
+does sleep fabricate consciousness?\
+It is interesting that the farther we are from sleep,\
+the harder consciousness is to maintain.\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
+
+\f1\b0\fs28 \cf0 Summary: NPO identifies and tracks non-stationary clusters, labeling 
+\f0\b \'93signal\'94 as outlier clusters
+\f1\b0  that contain far too many members, as compared to the number of members in \'93noise\'94 clusters. QED. (MacJournal entry: May 22, 2021)
+\f0\b\fs36 \cf2 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\sl288\slmult1\pardirnatural\partightenfactor0
+\cf2 \
+NB: Please remember that you have documentation in the Analysis section as an .Rmd document.\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\sl288\slmult1\pardirnatural\partightenfactor0
+
+\f1\b0\fs22 \cf2 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\sl288\slmult1\pardirnatural\partightenfactor0
+
+\f0\b\fs28 \cf2 Objective.
+\f1\b0 \cf2  Machine learning and classification algorithms are \'93taught\'94 using methods that differ from those used to teach human students. Machine learning algorithms normally work on an entire data set at once, computing multi-dimensional features and category boundaries (\'93separatrices\'94) using iterative optimization algorithms [Duda and Hart] whose computational time increases exponentially with data size. Humans are restricted to lower-dimensional space and sequential, localized time domains seeking repeated, outlier events that are rare compared to lower-amplitude noise events and that conform to expected, \'93physiological\'94 ranges and frequencies. Despite the advantages of machine learning, visual validation by a trained, human observer remains the \'93gold standard\'94 for virtually all biological signal processing tasks. In addition, humans are able to adjust categorical boundaries over time if signals show small amounts of variability. Graphical clustering algorithms on temporally bounded data achieve near-linear time performance, suggesting a possible bridge between machine and human clustering methods.\
+\
+
+\f0\b \cf2 Materials and Methods.
+\f1\b0 \cf2  We implemented a graphical clustering algorithm using sliding windows of data. Each time-voltage peak was encoded as a vertex connected to other vertices by their correlation coefficient. This removed the need for both thresholding and exponential-time optimization algorithms. Because the signal properties used for making decisions were valid for all biological signals, we used the same algorithm to detect action potentials (AP) from microwires and sharp-wave/ripple (SWR) complexes and interictal spikes (IIS) recorded from macroelectrodes based on the spectral filtering and expected temporal window of signals. (Can you detect SWR without detected IIS, and vice-versa?). Data were obtained from freely-moving rats, patients undergoing intracranial monitoring in the Yale ICU, and patients outside the hospital using an ambulatory EEG system.\
+\
+
+\f0\b \cf2 Results. 
+\f1\b0 \cf2 The algorithm run-time scaled nearly linearly with data size. It produced similar classification results on test data. The algorithm reproduced several known results, showing that the signals identified by the algorithm were indeed signals. In addition, the ability of the algorithm to adjust to small changes in signal waveforms was shown through a new result. IIS waveforms were observed to change following post-seizure sleep (known as Seizure Related Consolidation, or SRC) and these changes then persisted until the next seizure. \
+\
+
+\f0\b \cf2 Discussion.
+\f1\b0 \cf2  \
+\
+
+\f0\b \cf2 Keywords:
+\f1\b0 \cf2  <$keywords>\
+\
+Biological signal detection algorithms normally are based on a two-step algorithm: thresholding to reduce noise detections followed by iterative optimization methods (e.g., Maximum Likelihood Estimation) to identify and cluster similar signals. Both thresholding and optimization techniques became popular in the mid-20th century when computational power was limited and data storage was expensive. Thresholding reduced the size of the target dataset, allowing signal-rich data to be stored on expensive hard disks. Computationally complex optimization algorithms became common when sufficient CPU power became affordable to individual researchers, allowing \'93semi-automated\'94 approaches to signal identification and clustering. Subsequent improvements in technology, however, have reduced both of these barriers, but the continued observance of these constraints has limited algorithm advancement. Readily-available computers can now record and analyze terabytes of data, eliminating the need for threshold-based noise reduction, and parallel processing on computer clusters has given rise to techniques (e.g., bootstrapping) that no longer rely on an assumption of simplified, analytical statistical distributions (e.g., Gaussian distributions). In particular, recent advances in mathematical graph theory have provided graphical clustering algorithms known as \'93local clustering algorithms\'94 that scale nearly linearly is with the amount of data [Fountoulakis, Gleich and Mahoney, 2018]. These advances, however, have found limited application in biological signal processing.\
+\
+Biological events often consist of repeated, time-bounded events that share three properties relative to noise events: signals are relatively larger in amplitude, rare relative to noise events, and repeat in shape, at least over short timescale. These properties feature prominently in our determination of whether events identified by detection and clustering algorithms can reasonably be considered \'93signals\'94. Heartbeats, muscle contractions (e.g., eye blinks), and neural field and action potentials all consist of a series of temporally-bounded events separated by periods of inactivity. This suggests that, in addition to conventional waveform-based features used in classification algorithms (e.g., peak, energy, principal components), temporally-based features may also be of use; that is, parameters based on events occurring nearby one another in time. This would be particularly beneficial to signals whose waveforms are known to change slightly with time, either due to changes in electrode position (i.e., \'93drift\'94) or to underlying neural circuitry (i.e., learning). Temporally local classification would be more capable of tracking such changes than would a temporally-global classification algorithm.\
+\
+Recent advances in graphical clustering have shown that local clustering algorithms can operate in linear or nearly linear time [Fountoulakis etal, 2018]. Temporally-compact events can be stored in a graph as vertices and linked using correlation coefficients as weights between vertices. Common graphical algorithms can then be used to cluster similar waveforms and then compute network parameters on the resulting network. This clustering has the advantage of finding similarities across the entirety of a given, \'93correlation window\'94 based on physiological expectations of how long events from the same generator should appear to be similar. Given the assumption that most detected peaks are noise (i.e., signals are rare relative to noise), the resulting clusters can be directly separated into signal and noise [Bower etal, 20xx - patent application]. \
+\
+Combining these ideas, we implemented a graph-based clustering algorithm using temporographical properties of biological events in addition to traditional time-voltage characteristics to produce a novel signal identification algorithm; the NOGB algorithm. NOGB can identify any events that satisfy the three criteria: rare, repeatable and relatively large. Importantly, this algorithm is no longer hindered by either information-losing thresholding or time-consuming iterative optimization. The free parameters are the expected duration of the event, the minimum acceptable amplitude and frequency bandwidth for filtering. NOGB computational time scales linearly with data size, runs in real-time, and adapts to changes in recording fidelity. In addition, however, recordings of electrical biological signals are known to change over hours/days (e.g., due to changes in electrode position ("drift") [old paper showing changes in recorded action potential shape over days] or changes in ion concentrations around the electrode [action potential shape during seizures?]). In particular, the shape of IIS are known to change prior to seizures and following post-seizure sleep, reducing the reliability of signal detection algorithms that assume time-invariance in IIS shape.\
+\
+Outlier detection has been used previously to identify noise, such as the use of line-length computation to identify signals generated by electrical "ringing" [ref]. Our algorithm uses this method as a preprocessing stage to remove noisy events. Less work has been done, however, to use outliers to separate signals from noise.\
+\
+The NOGB algorithm was applied to three different datasets to identify clusters of similar signal events across multiple time scales: action potentials in rats (1 msec duration), sharp-wave/ripples in rats and patients (100 msec), and inter-ictal spikes in patients (200 msec). In addition to replicating prior results, we extended Seizure-Related Consolidation (SRC) theory by showing: 1) the necessity of post-seizure sleep for consolidation and 2) that the flexibility offered by the NOGB algorithm provides a novel algorithm for seizure prediction.}

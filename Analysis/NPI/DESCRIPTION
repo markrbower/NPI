@@ -1,0 +1,27 @@
+Package: NPI
+Version: 0.0-9
+Date: 2014-09-03
+Title: NPI
+Authors@R: person("Mark", "Bower", email = "mark.bower@yale.edu",
+  role = c("aut", "cre"))
+Description: A dummy package
+Depends: R (>= 4.0.0)
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.1.2
+NeedsCompilation: yes
+Imports:
+    iterators (>= 1.0.12),
+    itertools (>= 0.1-3),
+    Rcpp (>= 1.0.5),
+    RMySQL (>= 0.10.20),
+    future (>= 1.23.0),
+    here (>= 0.1)
+Suggests: 
+    knitr,
+    rmarkdown,
+    testthat
+VignetteBuilder: knitr
+LinkingTo: 
+    Rcpp

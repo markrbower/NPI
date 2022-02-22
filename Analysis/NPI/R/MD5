@@ -1,0 +1,12 @@
+367240d5681cdbc71cfd2f5c31200b64 *DESCRIPTION
+26aba1e6f7028245c4468ff0d54bab9b *NAMESPACE
+193b7930e7881d35af0d6b56f6b4d08d *R/helloJavaWorld.R
+9d50c70bbc1f89c0c84860ea764b7700 *R/onLoad.R
+3f3427236549e63ccb14bcac8dec230a *build/vignette.rds
+19022a28d1affd258b1c4b9ceaefd309 *inst/NEWS
+18dd1a2eda09be17ec53090805b68147 *inst/doc/helloJavaWorld.Rnw
+50b79410c5f8c50244f47490bdbf8e09 *inst/doc/helloJavaWorld.pdf
+496489992631602b779a867e6458d967 *inst/java/hellojavaworld.jar
+0d32eaa345f8243cdfb5e284c104e00d *java/HelloJavaWorld.java
+1ed91abb5599fc498913da1500f5c633 *man/helloJavaWorld.Rd
+18dd1a2eda09be17ec53090805b68147 *vignettes/helloJavaWorld.Rnw
