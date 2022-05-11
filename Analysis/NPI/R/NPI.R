@@ -21,12 +21,17 @@ NPI <- function( compArgs ) {
   correlationWindow <- compArgs_base$get('correlationWindow')
   fileProvider <- compArgs_base$findClass( 'fileProvider' )
   idx <- 0
+  
+  load( file='/Users/localadmin/Dropbox/Documents/Concepts/2021_11_19_NetworkPatternIdentifier/NPI/Analysis/NPI/R/useMatrix.RData' )
+  vectorOfCases <- use_matrix
+
+  subject <- compArgs$get('subject')
   while ( fileProvider$hasNext() ) {
     filename <- fileProvider$nextElem()
     compArgs_file <- createPtable( compArgs_base, filename )
     print( filename )
     compArgs_file <- topconnect::appendFileMetadata( compArgs_file, filename ) # 'info' should be added to 'compArgs' here
-    cases <- topconnect::caseIter( compArgs_file, 6 )
+    cases <- topconnect::caseIter( compArgs_file, nbrCases=12, vectorCases=vectorOfCases[subject,] )
     #    foreach::foreach(case = cases) %dopar% { # have the ability to do files in parallel as well as run futures (below)
     while ( cases$hasNext() ) {
       case <- cases$nextElem()
@@ -41,9 +46,6 @@ NPI <- function( compArgs ) {
         }
         # Gate
         val <- future::value( futs[[idx]] )
-        sink( file='NPI_output.log',append=TRUE)
-        print( "NPI: Into processThisCase" )
-        sink()
         futs[[idx]] <- future::future( processThisCase( case, compArgs_file, filename ) )
   #      processThisCase( case, compArgs_file, filename )
       } # cases$hasNext
@@ -51,7 +53,7 @@ NPI <- function( compArgs ) {
     rm( compArgs_file)
     gc()
   } # fileProvider$hasNext
-  v <- future::value( db_future ) # Wait for the previous write to finish
-  plan( sequential )
+#  v <- future::value( db_future ) # Wait for the previous write to finish
+#  plan( sequential )
 }
 

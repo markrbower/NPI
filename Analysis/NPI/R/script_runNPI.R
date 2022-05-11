@@ -1,17 +1,18 @@
 script_runNPI <- function() {
-#  options(error=recover)
+  #' @export
+  #  options(error=recover)
   compArgs <- RFactories::argumentComposite()
   dbp <- RFactories::databaseProvider(user="root",vault_user='localadmin',vault_key='NV_password',host='localhost',dbname='NV')
   compArgs$add( dbp )
-  if ( dir.exists('/Volumes/Data/NV/NVC1001_24_005_2') ) {
-    compArgs$add( RFactories::fileProvider(path='/Volumes/Data/NV/NVC1001_24_005_2',iterationType='directory',pattern="*.mef") )
-  } else if ( dir.exists('/Volumes/eplab/Raw_Data/NV_Human/NVC1001_24_005_2') ) {
-    compArgs$add( RFactories::fileProvider(path='/Volumes/eplab/Raw_Data/NV_Human/NVC1001_24_005_2',iterationType='directory',pattern="*.mef") )
+  if ( dir.exists('/Volumes/Data/NV/NVC1001_23_003_2') ) {
+    compArgs$add( RFactories::fileProvider(path='/Volumes/Data/NV/NVC1001_23_003_2',iterationType='directory',pattern="*.mef") )
+  } else if ( dir.exists('/Volumes/eplab/Raw_Data/NV_Human/NVC1001_23_003_2') ) {
+    compArgs$add( RFactories::fileProvider(path='/Volumes/eplab/Raw_Data/NV_Human/NVC1001_23_003_2',iterationType='directory',pattern="*.mef") )
   } else {
     print( "Cannot find a directory for data" )
     return()
   }
-  aInf <- RFactories::analysisInformer(experiment='NeuroVista',subject='24_005',centerTime=0,pattern="*.mef",lab="RNCP")
+  aInf <- RFactories::analysisInformer(experiment='NeuroVista',subject='23_003',centerTime=0,pattern="*.mef",lab="RNCP")
   compArgs$add( aInf )
   pInf <- RFactories::parameterInformer(signalType='IIS')
   pInf$loadParameters( dbp, aInf )  #  The parameterInformer requires a databaseProvidere to load parameters from the database.
@@ -37,5 +38,5 @@ script_runNPI <- function() {
 #    +-------------+-------------+------+-----+-------------------+-------------------+
 #    13 rows in set (0.02 sec)
 
-  NPI( compArgs )
+  NPI:::NPI( compArgs )
 }

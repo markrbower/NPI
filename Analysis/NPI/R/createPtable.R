@@ -5,7 +5,11 @@ createPtable <- function( compArgs, filename ) {
   db_provider <- compArgs$findClass( 'databaseProvider' )
   conn <- db_provider$connect()
   
+#  codebook <- getSubjectCode( compArgs, filename )
+  
   ## From NPI:::tableNamingLogic.R
+#  prefix <- paste0( 'P_', codebook$encoding, '_', compArgs$get('correlationWindow'), '_', round(100*as.numeric(compArgs$get('CCthreshold'))) )
+                    
   prefix <- paste0( compArgs$get('experiment'), '_', compArgs$get('subject'), '_', compArgs$get('signalType'), '_',
                     compArgs$get('centerTime'), '_', compArgs$get('channel'), '_',
                     compArgs$get('correlationWindow'), '_', round(100*as.numeric(compArgs$get('CCthreshold'))) )
@@ -23,11 +27,13 @@ createPtable <- function( compArgs, filename ) {
     query <- paste0( 'create table ', P, ' like P;' )    
     DBI::dbSendQuery( conn, query )
   }
-  table_names <- c( P=P )
   # Store table_names into compArgs. Where? How? Values are stored in "components"
   analysisInformer <- compArgs$findClass( 'analysisInformer' )
+  table_names <- c( P=P )
   analysisInformer$add( table_names )
-
+#  code_name <- c( codebook=codebook )  
+#  analysisInformer$add( code_name )
+  
   ## From NPI:::checkRestart
   if ( compArgs$isValid( '--restart') ) {
     # Restart for ALL channels for this subject and centerTime

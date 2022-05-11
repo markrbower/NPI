@@ -12,7 +12,6 @@ b_c <- function() {
   
   cutoffs <- c(c(2,5,10,20,50,100,200,500,1000))
 
-  sink( "betweenness.txt", append=TRUE )
   print( paste0( "Using ", nbrWorkers, " workers."))
   foreach ( cutoff = cutoffs ) %dopar% {
     print( system.time( value <- mean( igraph::estimate_betweenness( graph=grph, cutoff=cutoff ) ) ) )
@@ -22,6 +21,4 @@ b_c <- function() {
   print( system.time( value <- mean( igraph::betweenness( graph=grph ) ) ) )
   print( paste0( "cutoff: full" ) )
   print( value )
-  sink()
-  
 }

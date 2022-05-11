@@ -19,10 +19,6 @@ processThisCase <- function( case, compArgs_file, filename ) {
 
     counterIdx = 0
     timeConstraints <- NPI:::checkTimeConstraints( compArgs_caseSpecific$get('info'), case )
-#    sink(file = "future.out", append = TRUE )
-    cat( " : ", case$analysisStart, " : ", case$analysisStop, "\n")
-    cat( timeConstraints[['start']], " : ", timeConstraints[['stop']], "\n" )
-#    sink()
     iterCont <- meftools::MEFcont( filename, 'erlichda', compArgs_caseSpecific$get('bufferSize'), window=timeConstraints, info=compArgs_caseSpecific$get('info') )
     prev_peaks <- c(0)
     prev_nodes <- data.frame()
@@ -57,20 +53,12 @@ processThisCase <- function( case, compArgs_file, filename ) {
         # Get the next chunk of data
         data = iterData$nextElem()
         
-        sink( file='NPI_output.log',append=TRUE)
-        print( "processThisCase: Got data" )
-        sink()
-        
         t0 <- attr( data, 't0' )
         attr( data, 'counter' ) <- counterIdx
         T <- t0 + ( seq_along(data)-1 )*attr(data,'dt')
         attr(data,'T') <- T
         if ( prevMaxT > 0 ) {
           skipTime <- t0 - prevMaxT
-          skip_filename <- paste0( "skipTime_", compArgs_caseSpecific$get('channel') )
-          sink( file=skip_filename, append=TRUE )
-          print( skipTime )
-          sink()
         }
         prevMaxT <- max(T)
 #        print( paste0( "Data: ", length(data) ) )

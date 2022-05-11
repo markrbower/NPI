@@ -20,7 +20,6 @@ createBaseNPItables <- function( ... ) {
   }
   
   conn <- DBI::dbConnect( RMySQL::MySQL(), user="root", password=password, host=hostname, dbName=dbName)   # for software test
-  
   query <- paste0( "use ", dbName, ";")
   DBI::dbGetQuery( conn, query )
   
@@ -28,9 +27,11 @@ createBaseNPItables <- function( ... ) {
   query <- paste0( "create table if not exists tasks (username varchar(128), institution varchar(64), lab varchar(32)," )
   query <- paste0( query, "nodename varchar(128),experiment varchar(64)," )
   query <- paste0( query, "subject varchar(32), path varchar(256), service varchar(128),taskname varchar(128)," )
-  query <- paste0( query, "signaltype varchar(32), iterationtype varchar(32), centerTime bigint, parameters text," )
-  query <- paste0( query, "UUID varchar(36) primary key, done boolean, created timestamp default current_timestamp," )
-  query <- paste0( query, "modified timestamp default current_timestamp on update current_timestamp);" ) 
+  query <- paste0( query, "signaltype varchar(32), iterationtype varchar(32), centerTime bigint," )
+  query <- paste0( query, "analysisStart bigint, analysisStop bigint, parameters text," )
+  query <- paste0( query, "UUID varchar(36), done boolean, created timestamp default current_timestamp," )
+  query <- paste0( query, "modified timestamp default current_timestamp on update current_timestamp," )
+  query <- paste0( query, "primary key(subject,experiment,taskname,centerTime,UUID));")
   DBI::dbGetQuery( conn, query )
 
   # epochs
@@ -55,13 +56,14 @@ createBaseNPItables <- function( ... ) {
   query <- paste0( query, "label varchar(32),count int,clusterid int,waveform mediumtext,minT double,maxT double," )
   query <- paste0( query, "duration double,rate double,energy double,diameter double,edge_density double," )
   query <- paste0( query, "degree double,hub_score double,mean_distance double,transitivity double, " )
-  query <- paste0( query, "primary key(subject,channel,clusterid));")
+  query <- paste0( query, "eigenvalue double,betweenness double,closeness double, " )
+  query <- paste0( query, "primary key(subject,channel,seizureUsed,clusterid));")
   DBI::dbGetQuery( conn, query )
   
-  # C
-  query <- paste0( "create table if not exists C (subject varchar(32),channel varchar(256),seizureUsed bigint, " )
-  query <- paste0( query, "session varchar(128), wavefrom mediumtext, time bigint, clusterid int, communityid int, " )
-  query <- paste0( query, "primary key(subject,channel,seizureUsed,session,clusterid));" )
+  # T
+  query <- paste0( "create table if not exists T (subject varchar(32),channel varchar(256),seizureUsed bigint, " )
+  query <- paste0( query, "session varchar(128), waveform mediumtext, time bigint, clusterid int, behavior varchar(32), " )
+  query <- paste0( query, "primary key(subject,channel,seizureUsed,session,time));" )
   DBI::dbGetQuery( conn, query )
   
   DBI::dbDisconnect( conn )
