@@ -1,0 +1,145 @@
+R Container
+    singularity pull npo.sif docker://rocker/r-ver:latest
+    singularity build --sandbox npo/ npo.sif
+    singularity shell --writable npo/
+        mkdir /home/analysis
+        apt-get update && apt-get install -y --no-install-recommends libmysqlclient-dev
+        apt-get install -y openjdk-11-jdk liblzma-dev libxml2 libglpk-dev libbz2-dev
+        Rscript -e "install.packages('rJava')"
+        cp install_my_packages.R /home/analysis/install_my_packages.R
+        cp script_NPO_testbed.R /home/analysis/script_NPO_testbed.R
+
+        R
+        #invisible(lapply(paste0('package:', names(sessionInfo()$otherPkgs)), detach, character.only=TRUE, unload=TRUE))
+        
+        install.packages("DBI")
+        install.packages("RMySQL")
+        install.packages("devtools")
+        install.packages("rJava")
+        install.packages("Rcpp")
+        install.packages("here")
+        install.packages("GGally")
+        install.packages("ggnetwork")
+        install.packages("ggpubr")
+        install.packages("Rfast")
+        install.packages("reshape2")
+        install.packages("R6")
+        
+        library(devtools)
+
+        install.packages("uuid")  # This was the missing package to install.
+        install.packages("R6P")  # Error message: package ‘R6P’ is not available (for R version 4.0.2) 
+        # devtools::install_github("tidylab/R6P")  # Had to install it this way.
+        
+        devtools::install_github("markrbower/SingletonsInR", subdir="Analysis/SingletonsInR",upgrade=c("always"),force=TRUE)
+        devtools::install_github("markrbower/topsecret", subdir="Analysis/topsecret",upgrade=c("always"),force=TRUE)
+        devtools::install_github("markrbower/topconnect", subdir="Analysis/topconnect",upgrade=c("always"),force=TRUE)
+        devtools::install_github("markrbower/topigraph", subdir="Analysis/topigraph",upgrade=c("always"),force=TRUE)
+        devtools::install_github("markrbower/meftools", subdir="Analysis/meftools",upgrade=c("always"),force=TRUE)
+        devtools::install_github("markrbower/NPO", subdir="Analysis/NPO",upgrade=c("always"),force=TRUE)
+
+        Rscript /home/analysis/script_NPO_testbed.R
+
+    singularity build npo.sif npo/
+    rsync -aP npo.sif data.bridges2.psc.edu:.
+    
+MySQL Container
+    Terminal 1
+        singularity pull docker://mysql/mysql-server:latest
+        MYSQL_LIB=$(mkdir -p var_lib_mysql && readlink -f var_lib_mysql)
+        MYSQL_RUN=$(mkdir -p var_run_mysql && readlink -f var_run_mysql)
+        MYSQL_FILES=$(mkdir -p var_lib_mysql-files && readlink -f var_lib_mysql-files)
+        singularity instance start --bind ${MYSQL_LIB}:/var/lib/mysql,${MYSQL_RUN}:/var/run/mysqld,${MYSQL_FILES}:/var/lib/mysql-files mysql-server_latest.sif mysql
+        singularity run instance://mysql
+            [Entrypoint] GENERATED ROOT PASSWORD: ZrP/Dpt,sv9k36.WK.007.X2%7QD_K=x
+    Terminal 2
+        singularity exec instance://mysql mysql -u root -pZrP/Dpt,sv9k36.WK.007.X2%7QD_K=x
+            ALTER USER 'root'@'localhost' IDENTIFIED BY 'secret';
+            CREATE USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY 'secret';
+            create database testbed_results;
+            grant all privileges on *.* to 'root'@'%' with grant option;
+            drop user 'root'@'localhost';
+            flush privileges;
+            exit
+        exit
+        singularity exec instance://mysql mysql -u root -psecret
+        exit
+
+        DATA=$(readlink -f Halo_data_from_Roni)
+        singularity run --bind ${DATA}:/data/Halo_data_from_Roni/ npo.sif
+        R
+            R version 4.0.2 (2020-06-22) -- "Taking Off Again"
+            Copyright (C) 2020 The R Foundation for Statistical Computing
+            Platform: x86_64-pc-linux-gnu (64-bit)
+
+            R is free software and comes with ABSOLUTELY NO WARRANTY.
+            You are welcome to redistribute it under certain conditions.
+            Type 'license()' or 'licence()' for distribution details.
+
+            R is a collaborative project with many contributors.
+            Type 'contributors()' for more information and
+            'citation()' on how to cite R or R packages in publications.
+
+            Type 'demo()' for some demos, 'help()' for on-line help, or
+            'help.start()' for an HTML browser interface to help.
+            Type 'q()' to quit R.
+
+            > library(NPO)
+            > NPO:::NPO_testbed( hostname='127.0.0.1', db_user='root', password='secret', dbName='testbed_results' )
+            [1] "33 files to process."
+            [1] "hostname: 127.0.0.1"
+            [1] "password: secret"
+            $dbName
+            [1] "testbed_results"
+
+            $hostname
+            [1] "127.0.0.1"
+
+            $password
+            [1] "secret"
+
+            [1] "Getting context"
+            [1] "update tasks set modified=now(), username='julian', nodename='br023.ib.bridges2.psc.edu', path='/data/Halo_data_from_Roni', taskName='preprocessing', institution='Yale', lab='NSME', experiment='Halo_test', subject='11',iterationType='directory',UUID='5796f91f-2612-41f3-aa49-9879fbb853c7', parameters='db_user::root:::range1::-1000:::range2::1000:::correlationWindow::50000:::CCthreshold::0.7', signalType='AP',centerTime=0, service='testbed_results',done=0 where UUID='5796f91f-2612-41f3-aa49-9879fbb853c7';"
+
+            Attaching package: ‘signal’
+
+            The following objects are masked from ‘package:stats’:
+
+                filter, poly
+
+            Loading required package: foreach
+            Loading required package: iterators
+            Loading required package: parallel
+
+            Attaching package: ‘topconnect’
+
+            The following object is masked from ‘package:NPO’:
+
+                SQLiter
+
+            username institution  lab                  nodename experiment subject
+            1   julian        Yale NSME br023.ib.bridges2.psc.edu  Halo_test      11
+                                path         service      taskname signaltype
+            1 /data/Halo_data_from_Roni testbed_results preprocessing         AP
+            iterationtype centerTime
+            1     directory          0
+                                                                                            parameters
+            1 db_user::root:::range1::-1000:::range2::1000:::correlationWindow::50000:::CCthreshold::0.7
+                                            UUID done             created
+            1 5796f91f-2612-41f3-aa49-9879fbb853c7    0 2021-06-28 16:57:18
+                        modified db_user range1 range2 correlationWindow CCthreshold
+            1 2021-06-28 17:12:08    root  -1000   1000             50000         0.7
+
+            Attaching package: ‘igraph’
+
+            The following objects are masked from ‘package:stats’:
+
+                decompose, spectrum
+
+            The following object is masked from ‘package:base’:
+
+                union
+
+            [1] "Checking 30097 peaks."
+            [1] "Checking 40047 peaks."
+            [1] "Checking 40052 peaks."

@@ -1,0 +1,501 @@
+  104  cd ~/Dropbox/Documents/Concepts
+  105  ls
+  106  cd 2020_12_01_NeocortexForNPI
+  107  ls
+  108  find . -name "*.R"  -exec grep -Hn --color=auto "library(NPO)" '{}' \;
+  109  find . -name "*.R"  -exec grep -Hn --color=auto "library(NPO)" '{}' \;
+  110  find . -name "*.R"  -exec grep -Hn --color=auto "NPO" '{}' \;
+  111  pwd
+  112  ls
+  113  cd Analysis/
+  114  ls
+  115  cd ..
+  116  cd ..
+  117  ls
+  118  cd 2020_12_01_NeocortexForNPI
+  119  ls
+  120  cd Analysis/
+  121  ls
+  122  cd NeocortexForNPI/
+  123  ls
+  124  cd data
+  125  ls
+  126  cd Halo_data_from_Roni/
+  127  ls
+  128  pwd
+  129  ls
+  130  cd mef2
+  131  ls -al
+  132  cd ..
+  133  ls -al
+  134  cd Contra\ Hippoc\ TT1
+  135  ls -al
+  136  pwd
+  137  cd ../../../../..
+  138  ls
+  139  pwd
+  140  cd ../..
+  141  ls
+  142  pwd
+  143  cd 2018_07_29_meftools/meftools/
+  144  git add .; git commit -m "script_NPI_testbed runs"; git push
+  145  cd ../..
+  146  ls
+  147  cd 2020_07_14_topsecret/topsecret/
+  148  git add .; git commit -m "script_NPI_testbed runs"; git push
+  149  cd ../..
+  150  cd 2020_08_01_topconnect/topconnect/
+  151  git add .; git commit -m "script_NPI_testbed runs"; git push
+  152  cd ../..
+  153  cd 2020_08_10_topigraph/topigraph/
+  154  git add .; git commit -m "script_NPI_testbed runs"; git push
+  155  cd ../..
+  156  ls
+  157  cd 2021_06_06_RFactories/RFactories/
+  158  git add .; git commit -m "script_NPI_testbed runs"; git push
+  159  cd ../..
+  160  cd 2021_11_19_NetworkPatternIdentifier/NPI/
+  161  git add .; git commit -m "script_NPI_testbed runs"; git push
+  162  cd ../..
+  163  ls
+  164  cd 2020_12_01_NeocortexForNPI/NeocortexForNPI/
+  165  git add .; git commit -m "script_NPI_testbed runs"; git push
+  166  pwd
+  167  ls -al
+  168  git add .
+  169  git commit -m "Name change"
+  170  git push
+  171  ssh mbower@neocortex.psc.edu
+  172  ssh mbower@neocortex.psc.edu
+  173  ssh mbower@neocortex.psc.edu
+  174  ssh mbower@neocortex.psc.edu
+  175  ssh mbower@neocortex.psc.edu
+  176  ssh mbower@neocortex.psc.edu
+  177  pwd
+  178  cd ..
+  179  ..
+  180  ..
+  181  cd ..
+  182  cd ..
+  183  cd ..
+  184  pwd
+  185  cd ..
+  186  cd ..
+  187  pwd
+  188  cd ..
+  189  ls
+  190  cd 2020_12_01_NeocortexForNPO
+  191  ls
+  192  cd NPI
+  193  ls
+  194  cd ..
+  195  mv NPI/* .
+  196  ls
+  197  rm -rf NPI
+  198  ls
+  199  cd Analysis/
+  200  mkdir R
+  201  ls
+  202  cd R
+  203  ls
+  204  vi mysql.def
+  205  vi mysql.def
+  206  vi vi npi.def
+  207  vi npi.def
+  208  ls
+  209  rm vi
+  210  ls
+  211  vi npi.def
+  212  ls
+  213  pwd
+  214  singularity
+  215  singularity build --remote mysql.sif mysql.def
+  216  singularity remote login
+  217  singularity version
+  218  singularity remote login
+  219  singularity build --remote mysql.sif mysql.def
+  220  ls
+  221  vi mysql.def
+  222  singularity build --remote mysql.sif mysql.def
+  223  vi mysql.def
+  224  singularity build --remote mysql.sif mysql.def
+  225  ls
+  226  ls
+  227  ls
+  228  vi npi.def
+  229  singularity build --remote npo.sif npi.def
+  230  vi npi.def
+  231  singularity build --remote npo.sif npi.def
+  232  vi npi.def
+  233  singularity build --remote npo.sif npi.def
+  234  vi npi.def
+  235  cp npi.def npi.def_copy
+  236  vi npi.def
+  237  singularity build --remote npo.sif npi.def
+  238  vi npi.def
+  239  singularity build --remote npo.sif npi.def
+  240  vi npi.def
+  241  pwd
+  242  vi npi.def
+  243  singularity build --remote npo.sif npi.def
+  244  vi npi.def
+  245  singularity build --remote npo.sif npi.def
+  246  ls
+  247  vi mysql.def
+  248  singularity build --remote mysql.sif mysql.def
+  249  vi mysql.def
+  250  singularity build --remote mysql.sif mysql.def
+  251  ls
+  252  rm npi.def
+  253  cp npi.def_copy npi.def
+  254  vi npi.def
+  255  singularity build --remote npi.sif npi.def
+  256  ls
+  257  rm npo.sif
+  258  ls
+  259  rm npi.def_copy
+  260  ls
+  261  pwd
+  262  mkdir -p var_lib_mysql
+  263  mkdir -p var_run_mysql
+  264  mkdir -p var_lib_mysql-files
+  265  singularity instance start --bind "${PWD}"/var_lib_mysql:/var/lib/mysql,"${PWD}"/var_run_mysql:/var/run/mysqld,"${PWD}"/var_lib_mysql-files:/var/lib/mysql-files mysql.sif mysql
+  266  singularity pull npi.sif docker://rocker/r-ver:latest
+  267  singularity build --sandbox npo/ npo.sif
+  268  singularity build --sandbox npi/ npi.sif
+  269  pef
+  270  pef
+  271  pwd
+  272  ls
+  273  pwd
+  274  cd ..
+  275  cd ..
+  276  pwd
+  277  cd ..
+  278  ls
+  279  mkdir safe; mv !(safe) safe
+  280  git clone git@github.com:markrbower/NeocortexForNPI.git
+  281  mv safe/* NeocortexForNPI; rm -rf safe
+  282  cd NeocortexForNPI/
+  283  git add .;git commit -m “Initial commit”;git push
+  284  git add .
+  285  git commit -m "Initial commit"
+  286  git push
+  287  ls -al
+  288  vi .gitignore 
+  289  git add .
+  290  git commit -m "Initial commit"
+  291  git push
+  292  pwd
+  293  cd ..
+  294  ls
+  295  mkdir safe; mv !(safe) safe
+  296  ls
+  297  cd safe
+  298  ls
+  299  mv NeocortexForNPI/* .
+  300  ls
+  301  rm -rf NeocortexForNPI/
+  302  ls
+  303  cd Analysis/
+  304  ls
+  305  cd NeocortexForNPI/
+  306  ls
+  307  ls -al
+  308  cd R
+  309  ls -al
+  310  pwd
+  311  cd ..
+  312  ls
+  313  cd data
+  314  ls
+  315  cd Halo_data_from_Roni/
+  316  ls
+  317  cd mef2
+  318  ls
+  319  ls -al
+  320  cd ../..
+  321  pwd
+  322  cd ../..
+  323  pwd
+  324  cd ..
+  325  ls
+  326  cd ..
+  327  ls
+  328  git clone git@github.com:markrbower/NeocortexForNPI.git
+  329  mv safe/* NeocortexForNPI; rm -rf safe
+  330  cd NeocortexForNPI/
+  331  ls -al
+  332  gi .gitignore 
+  333  vi .gitignore 
+  334  git add .
+  335  git commit -m "Initial commit"
+  336  git push
+  337  pwd
+  338  ls -al
+  339  rm .git
+  340  rm -rf .git
+  341  rm -rf .gitignore 
+  342  pwd
+  343  mkdir safe; mv !(safe) safe
+  344  cd safe
+  345  ls
+  346  cd ..
+  347  ls
+  348  pwd
+  349  cd ..
+  350  ls
+  351  mv NeocortexForNPI/safe .
+  352  ls
+  353  ls NeocortexForNPI/*
+  354  ls
+  355  rm -rf NeocortexForNPI/
+  356  ls
+  357  ls
+  358  git clone git@github.com:markrbower/NeocortexForNPI.git
+  359  ls
+  360  ls -al
+  361  mv safe/* NeocortexForNPI; rm -rf safe
+  362  cd NeocortexForNPI/
+  363  ls -al
+  364  vi .gitignore 
+  365  git add .
+  366  git commit -m "Initial commit"
+  367  vi .gitignore 
+  368  vi .gitignore
+  369  git add .
+  370  git commit -m "Initial commit"
+  371  pwd
+  372  cd ..
+  373  pwd
+  374  mkdir safe; mv !(safe) safe
+  375  ls
+  376  cd safe
+  377  ls
+  378  mv NeocortexForNPI/* .
+  379  ls
+  380  rm -rf NeocortexForNPI
+  381  cd ..
+  382  ls
+  383  git clone git@github.com:markrbower/NeocortexForNPI.git
+  384  mv safe/* NeocortexForNPI; rm -rf safe
+  385  cd NeocortexForNPI/
+  386  ls -al
+  387  vi .gitignore 
+  388  git add .
+  389  git commit -m "Initial commit"
+  390  git push
+  391  pwd
+  392  ls
+  393  cd Analysis/
+  394  ls
+  395  cd NeocortexForNPI/
+  396  ls
+  397  cd R
+  398  ls
+  399  vi npi.def
+  400  singularity build --remote npi.sif npi.def
+  401  vi npi.def
+  402  singularity build --remote npi.sif npi.def
+  403  singularity build --remote npi.sif npi.def
+  404  vi npi.def
+  405  singularity build --remote npi.sif npi.def
+  406  vi npi.def
+  407  singularity build --remote npi.sif npi.def
+  408  singularity build --remote npi.sif npi.def
+  409  vi npi.def
+  410  singularity build --remote npi.sif npi.def
+  411  vi npi.def
+  412  singularity build --remote npi.sif npi.def
+  413  vi npi.def
+  414  pwd
+  415  cd ../../..
+  416  pwd
+  417  cd ..
+  418  pwd
+  419  find . -name "*.R"  -exec grep -Hn --color=auto "N4NPI" '{}' \;
+  420  pdw
+  421  pwd
+  422  ls
+  423  cd NeocortexForNPI/
+  424  ls -al
+  425  git add .
+  426  git commit -m "Still changing names"
+  427  git push
+  428  pwd
+  429  singularity build --remote npi.sif npi.def
+  430  cd ..
+  431  ls
+  432  singularity build --remote npi.sif npi.def
+  433  pwd
+  434  cd NeocortexForNPI/
+  435  ls
+  436  cd Analysis/
+  437  ls
+  438  cd NeocortexForNPI/
+  439  ls -al
+  440  cd R
+  441  ls -al
+  442  singularity build --remote npi.sif npi.def
+  443  vi npi.def
+  444  singularity build --remote npi.sif npi.def
+  445  vi npi.def
+  446  singularity build --remote npi.sif npi.def
+  447  singularity build --remote npi.sif npi.def
+  448  ls -al
+  449  vi npi.def
+  450  pwd
+  451  cd ..
+  452  cd ..
+  453  cd ..
+  454  cd ..
+  455  cd ../..
+  456  ls
+  457  cd Concepts
+  458  ls
+  459  cd 2021_11_19_NetworkPatternIdentifier
+  460  cd NPI/
+  461  ls
+  462  git add .
+  463  git commit -m "Change to processThisCase"
+  464  git push
+  465  pwd
+  466  cd ../..
+  467  ls
+  468  cd 2020_12_01_NeocortexForNPI
+  469  cd NeocortexForNPI/
+  470  ls
+  471  ls -al
+  472  cd Analysis/
+  473  ls
+  474  cd NeocortexForNPI/
+  475  ls
+  476  cd R
+  477  ls
+  478  scp -r NPO_*.def mbower@data.bridges2.psc.edu:/ocean/projects/ibn210001p/mbower
+  479  pwd
+  480  scp -r *.def mbower@data.bridges2.psc.edu:/ocean/projects/ibn210001p/mbower
+  481  scp -r *.def mbower@bridges2.psc.edu:/ocean/projects/ibn210001p/mbower
+  482  scp -r *.def mbower@neocortex.psc.edu:/ocean/projects/ibn210001p/mbower
+  483  ssh ssh mbower@neocortex.psc.edu
+  484  ssh mbower@neocortex.psc.edu
+  485  ssh mbower@neocortex.psc.edu
+  486  ssh mbower@bridges2.psc.edu
+  487  pwd
+  488  ls
+  489  ls *.def
+  490  scp -r *.def mbower@neocortex.psc.edu:/ocean/projects/ibn210001p/mbower
+  491  ls
+  492  pwd
+  493  ls
+  494  pwd
+  495  ssh mbower@neocortex.psc.edu
+  496  cd /Users/markrbower/Dropbox/Documents/Concepts/2020_12_01_NeocortexForNPI/NeocortexForNPI/Analysis/NeocortexForNPI/R
+  497  singularity build --remote lolcow.sif docker://sylabsio/lolcow
+  498  ssh mbower@neocortex.psc.edu
+  499  ssh mbower@neocortex.psc.edu
+  500  ssh mbower@neocortex.psc.edu
+  501  pwd
+  502  cd ~/Dropbox/Documents/Concepts
+  503  ls
+  504  cd 2021_11_19_NetworkPatternIdentifier
+  505  ls
+  506  cd NPI
+  507  ls
+  508  cd ..
+  509  ls -al
+  510  cd NPI
+  511  ls -al
+  512  git add .
+  513  git commit -m "Added b_c export"
+  514  git push
+  515  pwd
+  516  git add .
+  517  git commit -m "Added colVal.RData'
+"
+  518  git push
+  519  pwd
+  520  ls
+  521  cd Analysis/
+  522  ls
+  523  cd NPI
+  524  ls
+  525  cd R
+  526  ls
+  527  scp -r colVal.RData bm662@farnam.hpc.yale.edu:/ysm-gpfs/home/bm662/R
+  528  pwd
+  529  cd ../../..
+  530  ls
+  531  ls -al
+  532  vi .gitignore
+  533  ls
+  534  cd Analysis/
+  535  ls
+  536  cd NPI
+  537  ls
+  538  cd R
+  539  ls
+  540  ls -al
+  541  scp -r colVal.RData bm662@farnam.hpc.yale.edu:/ysm-gpfs/home/bm662/R
+  542  pwd
+  543  ls -al
+  544  cd ..
+  545  cd ..
+  546  ls -al
+  547  cd ..
+  548  ls -al
+  549  git add .
+  550  git commit -m "Updated b_c.R"
+  551  ls
+  552  git push
+  553  ls
+  554  cd Analysis/
+  555  ls
+  556  cd 
+  557  cd ~/Dropbox/Documents/Concepts
+  558  ls
+  559  cd 2021_11_19_NetworkPatternIdentifier
+  560  cd NPI/
+  561  cd Analysis/
+  562  cd NPI/
+  563  ls
+  564  cd R
+  565  ls
+  566  rm colVal.RData 
+  567  cd ../..
+  568  ls
+  569  cd ..
+  570  ls
+  571  ls -al
+  572  git add .
+  573  git commit -m "Big file"
+  574  git push
+  575  pwd
+  576  mv NPI/* .
+  577  ls
+  578  pwd
+  579  cd ..
+  580  pwd
+  581  ls
+  582  mv NPI/* .
+  583  ls
+  584  ls NPI
+  585  rm -rf NPI
+  586  pwd
+  587  ls
+  588  mkdir safe; mv !(safe) safe
+  589  git clone git@github.com:markrbower/NPI.git
+  590  mv safe/* NPI; rm -rf safe
+  591  cd NPI
+  592  vi .gitignore 
+  593  git add .
+  594  git commit -m "Initial commit"
+  595  git push
+  596  git add .
+  597  git commit -m "Included full betweenness computation in b_c."
+  598  git push
+  599  git push
+  600  git push
+  601  git push
+  602  mysql -u root
+  603  history > tmp

@@ -1,0 +1,55 @@
+---
+title: "helloJavaWorld"
+output: html_document
+---
+
+This notebook is written in RMarkdown. This project serves as a template for using Java objects in R. The Java code to generate the results presented is:  
+```{java eval=FALSE}
+/Users/m063341/Dropbox/Documents/Concepts/2017_05_16_helloJavaWorld/R_package/java/helloJavaWorld.java
+
+public class HelloJavaWorld {
+	
+	public Integer repeatNumber( Integer x ) {
+		return x;
+	}
+
+	public String sayHello() {
+		String result = new String("Hello Java World from R!");
+		return result;
+	}
+
+	public static void main(String[] args) {
+	}
+
+} 
+```
+
+To compile this, follow these steps:
+* $ pwd
+/Users/m063341/Dropbox/Documents/Concepts/2017_05_16_helloJavaWorld/R_package
+* $ javac -target 1.8 -source 1.8 -d inst/java java/*.java
+* $ jar fc inst/java/helloJavaWorld.jar inst/java/*.class
+
+Then, in RStudio:
+
+```{r include = FALSE}
+  library(devtools)
+##  install("/Users/m063341/Dropbox/Documents/Concepts/2017_05_16_helloJavaWorld/R_package")
+  library(helloJavaWorld)
+```
+
+The next section runs Java code in R, first by calling a static method on the helloJavaWorld class and then instantiating an object of that class, listing out it's methods and calling one of those methods. Listing out the available methods looks like an error output:
+
+```{r}  
+  helloJavaWorld()
+  hjw <- .jnew("HelloJavaWorld")
+  .jmethods(hjw)
+```
+
+The "repeatNumber" method simply outputs whatever integer it receives as input:
+
+```{r}  
+  hjw$repeatNumber(as.integer(3))
+```
+  
+

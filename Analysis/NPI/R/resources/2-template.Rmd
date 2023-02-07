@@ -1,0 +1,36 @@
+---
+title: “<your project name>“
+author: "Mark R. Bower"
+institution: "Yale University"
+output:
+  pdf_document: default
+  html_notebook: default
+  html_document: default
+header-includes:
+  \usepackage{fancyhdr}
+  \usepackage{graphicx}
+  \usepackage{eurosym}
+  \usepackage{booktabs,xcolor}
+  \pagestyle{fancy}
+  \fancyhf{}
+  \addtolength{\headheight}{0.5cm}
+  \rhead{\includegraphics[width=.8cm]{Yale_SoM_shield.png}}
+  \lhead{\includegraphics[width=1.2cm]{YaleLogo_small.png}}
+  \cfoot{Page \thepage}
+  \fancypagestyle{plain}{\pagestyle{fancy}}
+---
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+# Outline of Action
+
+Make the Rmd document "live"; i.e., update and over-write it, continuously. It is not a journal or lab book. It is a living document that needs to be burned down, bulldozed and re-built on a daily basis. Posterity is for paper and pen. Get used to rewriting sections until they solidify over days. When a section achieves some stability, copy it into the Scrivener document.
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
+
+```{r}
+plot(cars)
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file).

@@ -1,0 +1,3 @@
+peaksToNodes <- function( peaks ) {
+
+}

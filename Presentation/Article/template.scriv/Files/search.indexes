@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SearchIndexes Version="1.0">
+    <Documents>
+        <Document ID="61">
+            <Title>newCode.R</Title>
+            <Text>/* RRR */
+newCode &lt;- function() {
+    # Placeholder code
+}</Text>
+        </Document>
+        <Document ID="54">
+            <Title>Statistics</Title>
+        </Document>
+        <Document ID="47">
+            <Title>What hasn't been answered?</Title>
+        </Document>
+        <Document ID="62">
+            <Title>newStat.R</Title>
+            <Text>/* RRR */
+</Text>
+        </Document>
+        <Document ID="55">
+            <Title>What did you find?</Title>
+        </Document>
+        <Document ID="48">
+            <Title>What have others found?</Title>
+            <Text>This card has text entered that will be printed.</Text>
+        </Document>
+        <Document ID="63">
+            <Title>What do these findings mean for the future?</Title>
+        </Document>
+        <Document ID="56">
+            <Title>Future work</Title>
+            <Synopsis>What will you do next?</Synopsis>
+        </Document>
+        <Document ID="49">
+            <Title>documentHandling</Title>
+            <Text>RStudio generates R code (RStudio can generate lots of stu  ) Import code into Scrivener
+Write documentation
+Use Zotero to generate References
+Compile to generate PDF, man page, &amp; Markdown/LaTeX  les
+</Text>
+        </Document>
+        <Document ID="64">
+            <Title>10 Little Known Scrivener Tricks That Can Save You Time — Learn Scrivener Fast</Title>
+            <Text>
+About
+10 Little Known Scrivener Tricks That Can Save You Time
+Joseph Michael
+
+There are literally hundreds if not thousands of cool little things you can do with Scrivener to save you some time. Here is a quick 10 to get you started.
+
+1.
+Move the cursor to the bottom of the screen in full screen to show the control panel, or the top of the screen for menus.
+
+
+
+2.
+Set up a blank project with your preferred keywords, labels etc &amp; use “Save As Template” to use it as a base for new projects.
+
+
+
+3.
+A curled corner to a document icon indicates that it has a snapshot associated with it.
+
+
+
+4.
+You can convert web pages and PDF files to text files using Documents &gt; Convert.
+
+
+
+5.
+Ctrl-clicking on a multiple selection of documents allows you to assign a label or status to all of them at once.
+
+
+
+6.
+Hovering the mouse over an item in the binder will bring up its synopsis in a tooltip.
+
+
+
+7.
+You can drag items from the binder int the editor header bar as another way of opening them.
+
+
+
+8.
+You can use the zoom pop-up in the footer bar to increase text size instead of making the font bigger.
+
+
+
+9.
+Resize images in text by double-clicking on them to bring up the scale panel.
+
+
+
+10.
+Window &gt; zoom to fit screen (ctrl – cmd-= ) stretches the window to fit the screen.
+
+
+
+ 
+
+Was This Helpful?
+If you found this tip helpful why not share it with fellow Scrivener users. They’ll thank you for it 😉 
+
+ 
+ 
+ 
+Copyright © 2016 · Learn Scrivener Fast · All Rights Reserved
+</Text>
+        </Document>
+        <Document ID="57">
+            <Title>What are other explanations you don't believe?</Title>
+        </Document>
+        <Document ID="65">
+            <Title>newCode</Title>
+            <Text>This explains how newCode.R newCode works. The next section Statistics deals with statistics. The links in this section are “Scrivener Links” that are there for your benefit and will not show in the printed version.</Text>
+        </Document>
+        <Document ID="58">
+            <Title>If true, why is your theory important?</Title>
+            <Synopsis>Relation to other theories? Applications?</Synopsis>
+        </Document>
+        <Document ID="66">
+            <Title>What did you find?</Title>
+            <Synopsis>“Tell them, again.” Re-iterate your main findings. Conclude with your modified theory or hypothesis.</Synopsis>
+        </Document>
+        <Document ID="59">
+            <Title>What does this mean?</Title>
+            <Synopsis>How do these findings change the theory or theories described in the Introduction? Does it add, alter, or reject?</Synopsis>
+        </Document>
+        <Document ID="3">
+            <Title>Front page</Title>
+            <Synopsis>The Title Page for a printed manuscript. Title, authors and institutions.</Synopsis>
+            <Text>&lt;$Projecttitle&gt;
+
+Running head:
+&lt;$abbr_title&gt;
+
+Authors:
+
+[Insert authors here]
+
+Word count: &lt;$wc&gt;</Text>
+            <Notes>Populate Project meta-data settings in order to have Title and Running head (or Abbreviated title) automatically generated.
+You may also insert appropriate text at the placeholders if you don’t want Scrivener to generate title for you.</Notes>
+        </Document>
+        <Document ID="4">
+            <Title>Abstract &amp; keywords</Title>
+            <Text>Abstract
+
+Objective. [Insert text here]
+
+Materials and Methods. [Insert text here]
+
+Results. [Insert text here]
+
+Discussion. [Insert text here]
+
+Keywords: &lt;$keywords&gt;</Text>
+        </Document>
+        <Document ID="5">
+            <Title>Main content</Title>
+        </Document>
+        <Document ID="6">
+            <Title>Background and Significance</Title>
+            <Text>Background and Significance
+
+[Put your work into context and explain why it is important.]</Text>
+        </Document>
+        <Document ID="8">
+            <Title>Results</Title>
+            <Text>Results
+
+[Insert text here]</Text>
+        </Document>
+        <Document ID="9">
+            <Title>Discussion</Title>
+            <Text>Discussion
+
+[Insert text here]</Text>
+        </Document>
+        <Document ID="20">
+            <Title>Figure 1</Title>
+        </Document>
+        <Document ID="21">
+            <Title>Table 1</Title>
+            <Synopsis>After you insert Table caption, you may either make the table in Scrivener, or you may insert it in text-processor (Word etc) after compiling.</Synopsis>
+            <Text>Table 1: [insert text here]
+[insert table here]</Text>
+        </Document>
+        <Document ID="22">
+            <Title>Templates</Title>
+        </Document>
+        <Document ID="15">
+            <Title>Acknowledgements</Title>
+            <Synopsis>People and grant numbers.</Synopsis>
+            <Text>Acknowledgements
+
+[Insert text here]</Text>
+        </Document>
+        <Document ID="30">
+            <Title>Table X</Title>
+            <Synopsis>After you insert Table caption, you may either make the table in Scrivener, or you may insert it in text-processor (Word etc) after compiling.</Synopsis>
+            <Text>Table X: [insert text here]
+[insert table here]</Text>
+        </Document>
+        <Document ID="23">
+            <Title>Cover letter</Title>
+            <Text>[NOTE ANY SPECIAL ISSUE HERE]
+
+Dear Editors:
+
+It was with great interest that I read of the recent [Call for Papers]. We are very pleased to submit to your our paper “&lt;$Projecttitle&gt;.” This paper describes …
+
+In this paper we describe the …
+
+We believe that this paper would represent a unique contribution to the literature …, and thank you for review of this manuscript.
+
+Sincerely,
+
+&lt;Insert signature line here&gt;</Text>
+            <Notes>Outline for the Cover Letter:
+	1.	An introduction stating the title of the manuscript and the journal to which you are submitting.
+	2.	The reason why your study is important and relevant to the journal’s readership or field.
+	3.	The question your research answers.
+	4.	Your major experimental results and overall findings.
+	5.	The most important conclusions that can be drawn from your research.
+	6.	A statement that the manuscript has not been published and is not under consideration for publication in any other journal
+	7.	A statement that all authors approved the manuscript and its submission to the journal.
+	8.	Any other details that will encourage the editor to send your manuscript for review.
+
+Write one or more sentences to address each of these points. You will revise and polish these sentences to complete your cover letter. Detailed instructions on how to write a good cover letter can be found here:
+http://www.biosciencewriters.com/Writing-Cover-Letters-for-Scientific-Manuscripts.aspx
+</Notes>
+        </Document>
+        <Document ID="16">
+            <Title>Figure legends</Title>
+            <Text>Figure Legends
+Figure 1: [insert text here]
+Figure 2: [insert text here]</Text>
+        </Document>
+        <Document ID="31">
+            <Title>Methods</Title>
+            <Text>Methods
+
+[Insert text here]</Text>
+        </Document>
+        <Document ID="24">
+            <Title>Response to Reviewers' Comments</Title>
+            <Text>Response to Reviewers’ Comments
+
+We appreciate the detailed comments and suggestions from the reviewers. We have provided our responses below the corresponding comment. 
+
+Reviewer 1
+[Insert reviewers’ comments here]
+
+[Authors]
+
+&lt;$fullname&gt;</Text>
+        </Document>
+        <Document ID="17">
+            <Title>Figures</Title>
+        </Document>
+        <Document ID="32">
+            <Title>Conclusion</Title>
+            <Text>Conclusion
+
+[Insert text here]</Text>
+        </Document>
+        <Document ID="25">
+            <Title>Ideas</Title>
+        </Document>
+        <Document ID="18">
+            <Title>Tables</Title>
+        </Document>
+        <Document ID="40">
+            <Title>Abstract</Title>
+        </Document>
+        <Document ID="33">
+            <Title>man page</Title>
+        </Document>
+        <Document ID="26">
+            <Title>To-Do List</Title>
+            <Text>	⁃	Uncompleted To-Do
+	✓	Completed To-Do</Text>
+        </Document>
+        <Document ID="19">
+            <Title>References</Title>
+            <Text>References
+
+[Leave this empty to use a reference manager like Zotero. Once you create a bibliography in LibreOffice/Word, paste the generated references into this part of the document]</Text>
+            <Notes>If you are using EndNote, Zotero, or Mendeley you will need to cut and paste the generated references into this part of the document.  </Notes>
+        </Document>
+        <Document ID="41">
+            <Title>What is known?</Title>
+            <Synopsis>Start with axiomatic truths (statements most everybody would take as “givens”) about the field.</Synopsis>
+        </Document>
+        <Document ID="34">
+            <Title>Documentation</Title>
+        </Document>
+        <Document ID="42">
+            <Title>What's the problem?</Title>
+            <Synopsis>“Less is know about …” or “What has not been addressed, however, is …”</Synopsis>
+        </Document>
+        <Document ID="35">
+            <Title>RRR</Title>
+        </Document>
+        <Document ID="43">
+            <Title>What did you do?</Title>
+            <Synopsis>One or two sentences the source of your data and any experimental manipulations to or special conditions of those data sources.</Synopsis>
+        </Document>
+        <Document ID="50">
+            <Title>Subjects</Title>
+        </Document>
+        <Document ID="36">
+            <Title>template.Rd</Title>
+        </Document>
+        <Document ID="44">
+            <Title>What did you find?</Title>
+        </Document>
+        <Document ID="51">
+            <Title>Data Acquisition</Title>
+        </Document>
+        <Document ID="37">
+            <Title>template.Rnw</Title>
+        </Document>
+        <Document ID="52">
+            <Title>Preprocessing</Title>
+        </Document>
+        <Document ID="45">
+            <Title>What theory are you addressing?</Title>
+            <Synopsis>If a named theory, what’s the name and who discovered/named it? If it is a collection of theories, what are those theories and their authors and how do they relate to your work?</Synopsis>
+        </Document>
+        <Document ID="38">
+            <Title>template.R</Title>
+        </Document>
+        <Document ID="53">
+            <Title>Analysis</Title>
+            <Synopsis>RRR and template</Synopsis>
+        </Document>
+        <Document ID="46">
+            <Title>Why is that theory important?</Title>
+            <Synopsis>This card has a synopsis entered in the Inspector.
+</Synopsis>
+        </Document>
+        <Document ID="39">
+            <Title>Institutions</Title>
+        </Document>
+    </Documents>
+</SearchIndexes>

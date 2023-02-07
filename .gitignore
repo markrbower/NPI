@@ -37,3 +37,10 @@ vignettes/*.pdf
 
 # R Environment Variables
 .Renviron
+
+Presentation/Feynman_Tufte/*
+Analysis/NPI/ResultsAndFigures/*
+
+Presentation/Figures/*
+
+**.RData**

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CompileSettings>
+    <ProjectSettings>
+        <Content Scope="Included" IncludeGroupText="Yes">
+            <CompileGroup Type="BinderItem">D322106C-D095-463C-A481-7DDE9976CD8E</CompileGroup>
+            <Filter State="Off" Exclude="No" Type="Label">
+                <CollectionID>986B37A1-27EC-47A7-95FB-672617407BFD</CollectionID>
+                <Label>-1</Label>
+                <Status>-1</Status>
+            </Filter>
+        </Content>
+        <Options>
+            <RemoveComments>Yes</RemoveComments>
+            <RemoveAnnotations>Yes</RemoveAnnotations>
+            <ResampleImages DPI="72">No</ResampleImages>
+            <RemoveHyperlinks>Yes</RemoveHyperlinks>
+            <ConvertTablesAndListToMMD>Yes</ConvertTablesAndListToMMD>
+            <Links>
+                <ConvertDocumentLinksToHTML>Yes</ConvertDocumentLinksToHTML>
+            </Links>
+            <PDF>
+                <Cover Source="FrontMatter" Bleed="9.0" BleedUnits="pt"/>
+                <Compression Enabled="No">
+                    <ImageResolutionCompressionType>Set</ImageResolutionCompressionType>
+                    <ImageResolution>150</ImageResolution>
+                    <CompressionQuality>0.5</CompressionQuality>
+                </Compression>
+            </PDF>
+            <Scriptwriting>
+                <IncludeTitles>Yes</IncludeTitles>
+                <IncludeSynopses>Yes</IncludeSynopses>
+                <FootnotesAsScriptNotes>Yes</FootnotesAsScriptNotes>
+                <CommentsAsScriptNotes>Yes</CommentsAsScriptNotes>
+            </Scriptwriting>
+            <Ebook>
+                <StartAfterFrontMatter>Yes</StartAfterFrontMatter>
+                <Cover>
+                    <ImageDocument Source="FrontMatter"/>
+                    <Title>Cover</Title>
+                    <SVG Width="600" Height="800"><![CDATA[]]></SVG>
+                </Cover>
+                <TOC PandocDepth="3">
+                    <HTML Generate="Yes">
+                        <Title>Contents</Title>
+                    </HTML>
+                </TOC>
+            </Ebook>
+        </Options>
+        <MetaData>
+            <ProjectTitle>NOA</ProjectTitle>
+            <ProjectAbbreviatedTitle>NOA</ProjectAbbreviatedTitle>
+            <Authors>
+                <Author FileAs="Bower, Mark" Role="aut">Mark Bower</Author>
+            </Authors>
+            <Surname>Bower</Surname>
+            <Forename>Mark</Forename>
+            <Subjects>
+                <Subject></Subject>
+            </Subjects>
+            <EbookLanguage>en</EbookLanguage>
+            <FountainTitlePageMetaData>
+                <Value Key="Title"><![CDATA[<$projecttitle>]]></Value>
+                <Value Key="Author"><![CDATA[<$author>]]></Value>
+            </FountainTitlePageMetaData>
+            <MMDMetaData>
+                <Value Key="Title"><![CDATA[<$projecttitle>]]></Value>
+                <Value Key="Author"><![CDATA[<$author>]]></Value>
+            </MMDMetaData>
+        </MetaData>
+    </ProjectSettings>
+    <CurrentFileType>Print</CurrentFileType>
+    <FormatSettings>
+        <Format ID="DEFAULT">
+            <SectionLayouts>
+                <Type ID="9CFD86AF-BE46-4E54-977F-589EEFD8D6CE">NEW-PAGE-HEADER-WITH-TEXT</Type>
+                <Type ID="85940BD0-E69B-4DCB-92FE-FA7277DC8AE4">TEXT-SECTION</Type>
+                <Type ID="66C8073F-1DC7-4333-AB4A-1409B2F5AEE0">NEW-PAGE</Type>
+                <Type ID="E2A32AB7-8C3F-4919-B409-726FF17E1657">AS-IS</Type>
+            </SectionLayouts>
+        </Format>
+    </FormatSettings>
+    <LastUsedFormats/>
+</CompileSettings>
