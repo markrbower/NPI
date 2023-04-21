@@ -8,6 +8,8 @@ script_runNPI <- function() {
     compArgs$add( RFactories::fileProvider(path='/Volumes/Data/NV/NVC1001_24_002_2',iterationType='directory',pattern="*.mef") )
   } else if ( dir.exists('/Volumes/eplab/Raw_Data/NV_Human/NVC1001_24_002_2') ) {
     compArgs$add( RFactories::fileProvider(path='/Volumes/eplab/Raw_Data/NV_Human/NVC1001_24_002_2',iterationType='directory',pattern="*.mef") )
+  } else if ( dir.exists('Z:\Raw_Data\NV_Human\NVC1001_24_002_2') ) {
+    compArgs$add( RFactories::fileProvider(path='/Volumes/eplab/Raw_Data/NV_Human/NVC1001_24_002_2',iterationType='directory',pattern="*.mef") )
   } else {
     print( "Cannot find a directory for data" )
     return()
