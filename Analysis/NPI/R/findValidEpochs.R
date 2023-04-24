@@ -1,4 +1,4 @@
-findValidEpochs <- function( conn, project, subjectID, minDurationMinutes ) {
+findValidEpochs <- function( conn, project, subjectID, minDurationMinutes, basedir ) {
   # Following the Methods in the manuscript (Bower et al., 2022),
   # From each seizure onset,
   #   backtrack to find the lowest latency Sleep epoch lasting minDuration,
@@ -21,7 +21,7 @@ findValidEpochs <- function( conn, project, subjectID, minDurationMinutes ) {
   #  basedir <- '/Volumes/Oyen_1TB/RawData/NV_Human/'
   #  basedir <- paste0( '/Users/markrbower/Documents/Data/NV/NVC1001_', case$subject, '_2' )
   #  basedir <- paste0( '/Volumes/Data/NV/NVC1001_', case$subject, '_2' )
-  basedir <- paste0( '/Volumes/eplab/Raw_Data/NV_Human/NVC1001_', case$subject, '_2' )
+  #  basedir <- paste0( '/Volumes/eplab/Raw_Data/NV_Human/NVC1001_', case$subject, '_2' )
   mef_filename <- NPI:::filenameFromCase( basedir, case )
   vault <- topsecret::get_secret_vault()
   password_key <- paste0( 'MEF_password' )

@@ -34,7 +34,7 @@ persistValidSequentialSeizuresAsTasks <- function( dbhost, dbname, dbuser, dbpas
     
 #    persistDiscontinuitiesIntoEpochs( conn, subject=subject_id, basedir_mef=basedir_mef )
 
-    validEpochs <- NPI:::findValidEpochs( conn=conn, project=dbname, subjectID=subject_id, minDuration=durationMinutes )
+    validEpochs <- NPI:::findValidEpochs( conn=conn, project=dbname, subjectID=subject_id, minDuration=durationMinutes, basedir=basedir_mef )
     out_filename <- paste0( 'validEpochs_', subject_id )
     save(file=out_filename, validEpochs )
     
