@@ -11,6 +11,7 @@ persistFirstOfSequentialValidSeizuresToTasks <- function( dbhost, dbname, dbuser
     '25_005'
   )
   
+  useDictionary <- list()
   allValidFirstSeizures <- list()
   validFirstSeizures <- list()
 
@@ -36,6 +37,7 @@ persistFirstOfSequentialValidSeizuresToTasks <- function( dbhost, dbname, dbuser
     }
     keepers <- linspace( 1, length(candidates), 6 )
     validFirstSeizures <- candidates[round(keepers)]
+    useDictionary[[subject_id]] <- validFirstSeizures
  
     sysInfo <- Sys.info()
     
@@ -72,4 +74,6 @@ persistFirstOfSequentialValidSeizuresToTasks <- function( dbhost, dbname, dbuser
     }
     DBI::dbDisconnect(conn)
   } # subject
+  return( useDictionary  )
 }
+

@@ -21,8 +21,18 @@ NPI <- function( compArgs ) {
   correlationWindow <- compArgs_base$get('correlationWindow')
   fileProvider <- compArgs_base$findClass( 'fileProvider' )
   idx <- 0
+
+  # Look for 'firstSeizureOfValidPair' for this subject in the tasks table.  
+  # OLD WAY: load( file='/Users/localadmin/Dropbox/Documents/Concepts/2021_11_19_NetworkPatternIdentifier/NPI/Analysis/NPI/R/useMatrix.RData' )
+  # NEW WAY
+  db_provider <- compArgs$findClass( 'databaseProvider' )
+  conn <- db_provider$connect()
+  query <- paste0( "select analysisStart,analysisStop from tasks where subject=\'", compArgs$get('subject')," and taskname='firstSeizureOfValidPair';")
+  rs_seizureIDs <- DBI::dbGetQuery( conn, query )
   
-  load( file='/Users/localadmin/Dropbox/Documents/Concepts/2021_11_19_NetworkPatternIdentifier/NPI/Analysis/NPI/R/useMatrix.RData' )
+  
+  
+
   vectorOfCases <- use_matrix
 
   subject <- compArgs$get('subject')

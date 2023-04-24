@@ -1,9 +1,9 @@
-persistAnalysisBehaviors <- function() {
+persistAnalysisBehaviors <- function( useDictionary ) {
   library( RMySQL )
   library( DBI )
 
   # load use_matrix
-  load('/Users/markrbower/Dropbox/Documents/Concepts/2021_11_19_NetworkPatternIdentifier/NPI/Analysis/NPI/R/useMatrix.RData')
+#  load('/Users/markrbower/Dropbox/Documents/Concepts/2021_11_19_NetworkPatternIdentifier/NPI/Analysis/NPI/R/useMatrix.RData')
   
   # connect to the database
   conn <- DBI::dbConnect( RMySQL::MySQL(), user="root", password='', host='localhost', database="NV")
@@ -22,13 +22,13 @@ persistAnalysisBehaviors <- function() {
   behaviorSubgroups <- as.list( names( validEpochs) )
   
   # loop through subjects
-  for ( subject in as.list(rownames(use_matrix)) ) { # subject
+  for ( subject in as.list(names(useDictionary)) ) { # subject
     print(subject)
     # load the validEpochs RData file
     parsed.str <- parse(text=paste0( "load('validEpochs_", subject, ".RData')"))
     eval( parsed.str )
     
-    for ( seizureID in use_matrix[subject,] ) { # seizureID
+    for ( seizureID in useDictionary[subject] ) { # seizureID
 #      print( seizureID )
 
         str <- 'behavior'
