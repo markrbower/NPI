@@ -36,6 +36,8 @@ persistFirstOfSequentialValidSeizuresToTasks <- function( dbhost, dbname, dbuser
     keepers <- pracma:::linspace( 1, length(candidates), 6 )
     validFirstSeizures <- nbr_time$nbr[ candidates[round(keepers)] ]
     useDictionary[[subject_id]] <- validFirstSeizures
+    print( keepers )
+    print( validFirstSeizures )
  
     sysInfo <- Sys.info()
     
