@@ -33,7 +33,7 @@ persistFirstOfSequentialValidSeizuresToTasks <- function( dbhost, dbname, dbuser
         }
       }
     }
-    keepers <- linspace( 1, length(candidates), 6 )
+    keepers <- pracma:::linspace( 1, length(candidates), 6 )
     validFirstSeizures <- candidates[round(keepers)]
     useDictionary[[subject_id]] <- validFirstSeizures
  
