@@ -11,7 +11,7 @@ getSeizureIDs <- function( subjectID ) {
   rs_epochs <- DBI::dbGetQuery( conn, query )
   allSeizureStartTime <- rs_epochs$start
   
-  clearAllDBcons()
+  topconnect::clearAllDBcons()
   
   seizureNbr <- vector(mode='integer','length'=length(validSeizureStartTime))
   seizureTime <- vector(mode='integer','length'=length(validSeizureStartTime))
