@@ -1,7 +1,5 @@
 persistFirstOfSequentialValidSeizuresToTasks <- function( dbhost, dbname, dbuser, dbpassword, basedir_mef=NULL, durationMinutes=5, institution='Yale', lab='RNCP', experiment='SequentialSRC', signalType='NV', iterationType='directory' ) {
     
-  source("~/Dropbox/Documents/Concepts/2021_11_19_NetworkPatternIdentifier/NPI/Analysis/NPI/R/getSeizureIDs.R")
-  
   subject_ids <-  list(
     '23_003',
     '24_002',
@@ -16,7 +14,7 @@ persistFirstOfSequentialValidSeizuresToTasks <- function( dbhost, dbname, dbuser
   validFirstSeizures <- list()
 
   for ( subject_id in subject_ids ) {
-    txt <- paste0( "nbr_time <- getSeizureIDs('", subject_id, "')")
+    txt <- paste0( "nbr_time <- NPI:::getSeizureIDs('", subject_id, "')")
     eval(parse(text=txt))
     dnbrs <- diff( nbr_time$nbr )
     
