@@ -33,7 +33,9 @@ findValidEpochs <- function( conn, project, subjectID, minDurationMinutes, based
   info <- meftools::mef_info( c(mef_filename,secret::get_secret(password_key,key=secret::local_key(),vault=vault)) )
   T0 <- info$header$recording_start_time
   print( paste0( "T0: ", T0 ) )
-
+  sf <- info$header$sampling_frequency
+  print( paste0( "sf: ", sf ) )
+  
 #  minDuration <- minDuration * 2; # Assumes 'minDuration' is in minutes and behaviors are recorded in 30 sec windows.
   
   # Find all seizures.
