@@ -23,12 +23,15 @@ findValidEpochs <- function( conn, project, subjectID, minDurationMinutes, based
   #  basedir <- paste0( '/Volumes/Data/NV/NVC1001_', case$subject, '_2' )
   #  basedir <- paste0( '/Volumes/eplab/Raw_Data/NV_Human/NVC1001_', case$subject, '_2' )
   mef_filename <- NPI:::filenameFromCase( basedir, case )
+  print( paste0( "mef_filename: ", mef_filename ) )
   vault <- topsecret::get_secret_vault()
   password_key <- paste0( 'MEF_password' )
+  print( paste0( "mef password: ", secret::get_secret(password_key,key=secret::local_key(),vault=vault) ) )
 #  load( file="deleteThisTmpInfo" )
 #  load("tmp_info.RData" )
   info <- meftools::mef_info( c(mef_filename,secret::get_secret(password_key,key=secret::local_key(),vault=vault)) )
   T0 <- info$header$recording_start_time
+  print( paste0( "T0: ", T0 ) )
 
 #  minDuration <- minDuration * 2; # Assumes 'minDuration' is in minutes and behaviors are recorded in 30 sec windows.
   
