@@ -23,7 +23,7 @@ findValidEpochs <- function( conn, project, subjectID, minDurationMinutes, based
   #  basedir <- paste0( '/Volumes/Data/NV/NVC1001_', case$subject, '_2' )
   #  basedir <- paste0( '/Volumes/eplab/Raw_Data/NV_Human/NVC1001_', case$subject, '_2' )
   subjectdir <- paste0( 'NVC1001_', subjectID, '_2/')
-  mef_filename <- paste0( basedir, subjectidr, NPI:::filenameFromCase( case ) )
+  mef_filename <- paste0( basedir, subjectdir, NPI:::filenameFromCase( case ) )
   print( paste0( "mef_filename: ", mef_filename ) )
   vault <- topsecret::get_secret_vault()
   password_key <- paste0( 'MEF_password' )
