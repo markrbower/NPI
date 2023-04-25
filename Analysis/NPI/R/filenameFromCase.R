@@ -1,4 +1,4 @@
-filenameFromCase <- function( basedir, case ) {
+filenameFromCase <- function( case ) {
   #' @export
   
   library( stringr )
@@ -18,7 +18,5 @@ filenameFromCase <- function( basedir, case ) {
     }
   }
 
-  result <- file.path( basedir, localname, fsep = .Platform$file.sep)
-  
-  return( result )
+  return( localname )
 }
