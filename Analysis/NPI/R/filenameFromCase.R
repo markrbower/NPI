@@ -3,7 +3,6 @@ filenameFromCase <- function( basedir, case ) {
   
   library( stringr )
 
-  # Now that I am switching to a full directory description with "NPO.R", "getNVsubjectFromFilename" should not be needed.
   if ( str_detect( case$channel, 'NVC' ) ) {
     patientDir <- paste0( NPI:::getNVsubjectFromFilename( case$channel ), '_2' )
     if ( str_detect( case$channel, 'mef$' ) ) {
