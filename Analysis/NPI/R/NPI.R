@@ -27,21 +27,21 @@ NPI <- function( compArgs ) {
   # NEW WAY
   db_provider <- compArgs$findClass( 'databaseProvider' )
   conn <- db_provider$connect()
-  query <- paste0( "select analysisStart,analysisStop from tasks where subject=\'", compArgs$get('subject'),"\' and taskname='firstSeizureOfValidPair';")
-  rs_seizureIDs <- DBI::dbGetQuery( conn, query )
+  query <- paste0( "select centerTime,analysisStart,analysisStop,UUID from tasks where subject=\'", compArgs$get('subject'),"\' and taskname='firstSeizureOfValidPair';")
+  rs_analysisWindows <- DBI::dbGetQuery( conn, query )
+  cases <- topconnect::RSiter( rs_analysisWindows )
   
-  
-  
-
-  vectorOfCases <- use_matrix
-
   subject <- compArgs$get('subject')
   while ( fileProvider$hasNext() ) {
     filename <- fileProvider$nextElem()
     compArgs_file <- createPtable( compArgs_base, filename )
     print( filename )
-    compArgs_file <- topconnect::appendFileMetadata( compArgs_file, filename ) # 'info' should be added to 'compArgs' here
-    cases <- topconnect::caseIter( compArgs_file, nbrCases=12, vectorCases=vectorOfCases[subject,] )
+    # 'info' should be added to 'compArgs' here
+    compArgs_file <- topconnect::appendFileMetadata( compArgs_file, filename )
+    
+    # Replaced: see above
+    # cases <- topconnect::caseIter( compArgs_file, nbrCases=12, vectorCases=vectorOfCases[subject,] )
+    
     #    foreach::foreach(case = cases) %dopar% { # have the ability to do files in parallel as well as run futures (below)
     while ( cases$hasNext() ) {
       case <- cases$nextElem()

@@ -6,7 +6,7 @@ processThisCase <- function( case, compArgs_file, filename ) {
   CW <- compArgs_file$get( 'correlationWindow' )
   print( CW )
   compArgs_caseSpecific <- compArgs_file
-  case <- topconnect:::expandStringsToFields( case, "parameters", sep1=":::", sep2="::" )
+  #case <- topconnect:::expandStringsToFields( case, "parameters", sep1=":::", sep2="::" )
   compArgs_caseSpecific$findClass('metadataInformer')$set( "case", case )
   # Now, you can populate the 'static_fields' in the databaseUpdateBuffer
   if ( topconnect::currentProcessedLevel( compArgs_caseSpecific, case, 0 ) ) {
