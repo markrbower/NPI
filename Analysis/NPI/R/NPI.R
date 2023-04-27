@@ -27,7 +27,7 @@ NPI <- function( compArgs ) {
   # NEW WAY
   db_provider <- compArgs$findClass( 'databaseProvider' )
   conn <- db_provider$connect()
-  query <- paste0( "select analysisStart,analysisStop from tasks where subject=\'", compArgs$get('subject')," and taskname='firstSeizureOfValidPair';")
+  query <- paste0( "select analysisStart,analysisStop from tasks where subject=\'", compArgs$get('subject'),"\' and taskname='firstSeizureOfValidPair';")
   rs_seizureIDs <- DBI::dbGetQuery( conn, query )
   
   
