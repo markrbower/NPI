@@ -39,6 +39,11 @@ script_runNPI <- function() {
 #    | UUID        | varchar(36) | YES  |     | NULL              |                   |
 #    +-------------+-------------+------+-----+-------------------+-------------------+
 #    13 rows in set (0.02 sec)
+  
+  print( paste0( "experiment: ", compArgs$get('experiment')))
+  print( paste0( "subject: ", compArgs$get('subject')))
+  print( paste0( "centerTime: ", compArgs$get('centerTime')))
+  
 
   NPI:::NPI( compArgs )
 }

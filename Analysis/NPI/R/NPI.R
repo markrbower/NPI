@@ -14,6 +14,12 @@ NPI <- function( compArgs ) {
   futs <- vector( "list", nbrWorkers )
   for ( idx in seq(1,nbrWorkers) ) { futs[[idx]] <- future::future(1) }
   
+  # Why isn't this finding the correct values?
+  print( "In NPI:")
+  print( paste0( "experiment: ", compArgs$get('experiment')))
+  print( paste0( "subject: ", compArgs$get('subject')))
+  print( paste0( "centerTime: ", compArgs$get('centerTime')))
+  
   compArgs_base <- NPI:::checkRestartProgressAndPassword( compArgs )
   CW <- compArgs$get( 'correlationWindow' )
   bufferSizePower <- 24

@@ -1,6 +1,8 @@
 checkRestartProgressAndPassword <- function( compArgs ) {
   # Built from multiple files
   library(stringr)
+  
+  print( "In checkRestart:")
 
   db_provider <- compArgs$findClass( 'databaseProvider' )
   conn <- db_provider$connect()
