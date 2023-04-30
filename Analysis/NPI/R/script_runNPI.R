@@ -17,29 +17,9 @@ script_runNPI <- function() {
   aInf <- RFactories::analysisInformer(experiment='NeuroVista',subject='24_002',centerTime=0,pattern="*.mef",lab="RNCP")
   compArgs$add( aInf )
   pInf <- RFactories::parameterInformer(signalType='IIS')
-  pInf$loadParameters( dbp, aInf )  #  The parameterInformer requires a databaseProvidere to load parameters from the database.
+  pInf$loadParameters( dbp, aInf )  #  The parameterInformer requires a databaseProvider to load parameters from the database.
   compArgs$add( pInf )
 
-#  mysql> describe P;
-#  +-------------+-------------+------+-----+-------------------+-------------------+
-#    | Field       | Type        | Null | Key | Default           | Extra             |
-#    +-------------+-------------+------+-----+-------------------+-------------------+
-#    | subject     | varchar(32) | YES  | MUL | NULL              |                   |
-#    | channel     | varchar(32) | YES  |     | NULL              |                   |
-#    | time        | bigint      | YES  |     | NULL              |                   |
-#    | waveform    | mediumtext  | YES  |     | NULL              |                   |
-#    | cluster     | varchar(32) | YES  |     | NULL              |                   |
-#    | clusterid   | int         | YES  |     | NULL              |                   |
-#    | seizureUsed | bigint      | YES  |     | NULL              |                   |
-#    | peak        | double      | YES  |     | NULL              |                   |
-#    | energy      | double      | YES  |     | NULL              |                   |
-#    | incident    | mediumtext  | YES  |     | NULL              |                   |
-#    | weights     | mediumtext  | YES  |     | NULL              |                   |
-#    | created_on  | datetime    | NO   |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED |
-#    | UUID        | varchar(36) | YES  |     | NULL              |                   |
-#    +-------------+-------------+------+-----+-------------------+-------------------+
-#    13 rows in set (0.02 sec)
-  
   print( paste0( "experiment: ", compArgs$get('experiment')))
   print( paste0( "subject: ", compArgs$get('subject')))
   print( paste0( "centerTime: ", compArgs$get('centerTime')))
