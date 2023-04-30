@@ -3,7 +3,10 @@ checkRestartProgressAndPassword <- function( compArgs ) {
   library(stringr)
   
   print( "In checkRestart:")
-
+  print( paste0( "experiment: ", compArgs$get('experiment')))
+  print( paste0( "subject: ", compArgs$get('subject')))
+  print( paste0( "centerTime: ", compArgs$get('centerTime')))
+  
   db_provider <- compArgs$findClass( 'databaseProvider' )
   conn <- db_provider$connect()
   
@@ -13,6 +16,7 @@ checkRestartProgressAndPassword <- function( compArgs ) {
   prefix <- str_replace_all( prefix, '::', '_' )
   prefix <- str_replace_all( prefix, '=', '_' )
   prefix <- str_replace_all( prefix, '-', 'MINUS' )
+  print( paste0( "prefix: ", prefix ) )
 
   ## From NPI:::createTablesForNPI.R
   progress <- paste0( prefix, '_progress' )
