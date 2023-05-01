@@ -23,6 +23,8 @@ script_runNPI <- function() {
   print( paste0( "experiment: ", compArgs$get('experiment')))
   print( paste0( "subject: ", compArgs$get('subject')))
   print( paste0( "centerTime: ", compArgs$get('centerTime')))
+  print( paste0( "correlationWindow: ", compArgs$get('correlationWindow')))
+  print( paste0( "CCthreshold: ", compArgs$get('CCthreshold')))
   
   NPI:::NPI( compArgs )
 }
