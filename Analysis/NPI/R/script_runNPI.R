@@ -16,14 +16,13 @@ script_runNPI <- function() {
   }
   aInf <- RFactories::analysisInformer(experiment='NeuroVista',subject='24_002',centerTime=0,pattern="*.mef",lab="RNCP")
   compArgs$add( aInf )
-  pInf <- RFactories::parameterInformer(signalType='IIS')
-  pInf$loadParameters( dbp, aInf )  #  The parameterInformer requires a databaseProvider to load parameters from the database.
+  pInf <- RFactories::parameterInformer(signalType='IIS',correlationWindow=600000000,CCthreshold=0.9)
+#  pInf$loadParameters( dbp, aInf )  #  The parameterInformer requires a databaseProvider to load parameters from the database.
   compArgs$add( pInf )
 
   print( paste0( "experiment: ", compArgs$get('experiment')))
   print( paste0( "subject: ", compArgs$get('subject')))
   print( paste0( "centerTime: ", compArgs$get('centerTime')))
   
-
   NPI:::NPI( compArgs )
 }
