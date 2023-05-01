@@ -14,9 +14,9 @@ script_runNPI <- function() {
     print( "Cannot find a directory for data" )
     return()
   }
-  aInf <- RFactories::analysisInformer(experiment='NeuroVista',subject='24_002',centerTime=0,pattern="*.mef",lab="RNCP")
+  aInf <- RFactories::analysisInformer(experiment='NeuroVista',subject='24_002',centerTime=0,pattern="*.mef",lab="RNCP",signalType='IIS',correlationWindow=600000000,CCthreshold=0.9)
   compArgs$add( aInf )
-  pInf <- RFactories::parameterInformer(signalType='IIS',correlationWindow=600000000,CCthreshold=0.9)
+#  pInf <- RFactories::parameterInformer(signalType='IIS',correlationWindow=600000000,CCthreshold=0.9)
 #  pInf$loadParameters( dbp, aInf )  #  The parameterInformer requires a databaseProvider to load parameters from the database.
   compArgs$add( pInf )
 
