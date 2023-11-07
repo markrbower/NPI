@@ -15,11 +15,11 @@ NPI_testbed_prob <- function( compArgs, progressFields ) {
   blockSize <- 800;
   maxSize <- 750 	# 750*20 = 15,000 sec; 10x CW
   CW <- 20000 	# 10000/20 = 500 inputs expected
-  quorum <- 20
+  quorum <- 100
   CC_threshold <- 0.75
   ER_threshold <- 0.7
-  partitionFactor <- 0.05
-  numthreads <- 32
+  partitionFactor <- 0.01
+  numthreads <- 4
 
   randVec <- list();
   resultVector <- list();
@@ -55,7 +55,7 @@ NPI_testbed_prob <- function( compArgs, progressFields ) {
   # Load toy data
   load( file="matrix.data" )
   
-  if ( !file.exists( "/Users/markrbower/Dropbox/Documents/Concepts/2021_11_19_NetworkPatternIdentifier/NPI/Analysis/NPI/.RData" ) ) {
+  if ( !file.exists( "/Users/markrbower/Dropbox/Documents/Concepts/2021_11_19_NetworkPatternIdentifier/NPI/Analysis/NPI/global_df.RData" ) ) {
   # Define processing block sizes
   nbrBlocks <- ((nrows-blockSize)/(blockSize/2)) + 1
   sum_X <- matrix(0,blockSize,maxSize)
@@ -200,16 +200,18 @@ NPI_testbed_prob <- function( compArgs, progressFields ) {
     } # x
   } # blockNbr
   # Allocate the ancestorMap
-  } # /Users/markrbower/Dropbox/Documents/Concepts/2021_11_19_NetworkPatternIdentifier/NPI/Analysis/NPI/.RData exists
+  } # /Users/markrbower/Dropbox/Documents/Concepts/2021_11_19_NetworkPatternIdentifier/NPI/Analysis/NPI/global_df.RData exists
   print( paste0( getwd() ) )
   ancestorMap <- hashmap()
 
-  if ( file.exists( "/Users/markrbower/Dropbox/Documents/Concepts/2021_11_19_NetworkPatternIdentifier/NPI/Analysis/NPI/.RData" ) ) {
-    load( file="/Users/markrbower/Dropbox/Documents/Concepts/2021_11_19_NetworkPatternIdentifier/NPI/Analysis/NPI/.RData")
+  if ( file.exists( "/Users/markrbower/Dropbox/Documents/Concepts/2021_11_19_NetworkPatternIdentifier/NPI/Analysis/NPI/global_df.RData" ) ) {
+    load( file="/Users/markrbower/Dropbox/Documents/Concepts/2021_11_19_NetworkPatternIdentifier/NPI/Analysis/NPI/global_df.RData")
   } else {
-    save( global_df, file="/Users/markrbower/Dropbox/Documents/Concepts/2021_11_19_NetworkPatternIdentifier/NPI/Analysis/NPI/.RData")
+    save( global_df, file="/Users/markrbower/Dropbox/Documents/Concepts/2021_11_19_NetworkPatternIdentifier/NPI/Analysis/NPI/global_df.RData")
   }
   
+  if ( !file.exists( "/Users/markrbower/Dropbox/Documents/Concepts/2021_11_19_NetworkPatternIdentifier/NPI/Analysis/NPI/ancestorMap.RData" ) ) {
+
   # Process graphs (OMP) to make "ancestor_map"
   for ( my_id in seq(1:numthreads) ) {
     # Determine graph limits
@@ -218,6 +220,7 @@ NPI_testbed_prob <- function( compArgs, progressFields ) {
     my_stop  <- ((nrows / numthreads) * my_id)
     my_stop_t <- ta[my_stop]
     my_cnt <- my_stop - my_start + 1
+    print( paste0( "Working on ", my_start, " to ", my_stop ) )
   
     # Find the limits of the CW
     my_startCW <- max( which( ta <= (my_start_t - CW) ) )
@@ -249,8 +252,9 @@ NPI_testbed_prob <- function( compArgs, progressFields ) {
       } else {
         sg <- induced.subgraph(graph=g,vids=idxs)
         # Partition
+#        partition <- leiden(sg,resolution_parameter=partitionFactor,n_iterations=-1)
         partition <- leiden(sg)
-
+        
         if ( length(quorumQueue) >0 ) { # process the queue
 #          if ( my_id == 1 ) { # add on those events during the initial CW
 #            CW_idx <- which( ta >= my_startCW_t & ta < my_start_t)
@@ -277,7 +281,7 @@ NPI_testbed_prob <- function( compArgs, progressFields ) {
         # Process this targetTime
         clik <- partition[ which( as.numeric(V(sg)$name) == target_time ) ]
         ancestorsIdx <- which( (partition==clik) & (as.numeric(V(sg)$name) < target_time) )
-        if ( length( ancestorsIdx) > 0 ) {
+        if ( length( ancestorsIdx) == 0 ) {
           ancestorMap[ target_time ] <- list('')
         } else {
           ancestorMap[ target_time ] <- list( as.numeric( V(sg)$name[ancestorsIdx]) )
@@ -285,18 +289,32 @@ NPI_testbed_prob <- function( compArgs, progressFields ) {
       }
     }
   }
+  } # File check as to whether ancestorMap.RData exists
+  
+  if ( file.exists( "/Users/markrbower/Dropbox/Documents/Concepts/2021_11_19_NetworkPatternIdentifier/NPI/Analysis/NPI/ancestorMap.RData" ) ) {
+    load( file="/Users/markrbower/Dropbox/Documents/Concepts/2021_11_19_NetworkPatternIdentifier/NPI/Analysis/NPI/ancestorMap.RData")
+  } else {
+    save( ancestorMap, file="/Users/markrbower/Dropbox/Documents/Concepts/2021_11_19_NetworkPatternIdentifier/NPI/Analysis/NPI/ancestorMap.RData")
+  }
+
   # Assign global class
   latest_class = 1
   global_class <- hashmap()
   for ( target_time in ta ) {
-    L <- ancestorMap[target_time]
+    L <- ancestorMap[ target_time][[1]]
     if ( nchar(L[1])==0 ) {
-      global_class[ target_time ] <- latest_class
+      new_class <- latest_class
       latest_class <- latest_class + 1
     } else {
-      ant <- table( ancestorMap[target_time] )
-      global_class[ target_time ] <- as.numeric( names( which( ant == max(ant) ) ) )
+      GC <- as.numeric( global_class[L] )
+      GC_teacher <- as.numeric( teacherClass[L] )
+      print( GC )
+      print( GC_teacher )
+      ant <- table( GC )
+      new_class <- as.numeric( names( which( ant == max(ant) ) ) )
+      print( paste0( "target_time: ", target_time, " GC: ", new_class, " TC: ", teacherClass[target_time]))
     }
+    global_class[ target_time ] <- new_class
   }
     
   
