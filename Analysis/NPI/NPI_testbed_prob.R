@@ -18,7 +18,7 @@ NPI_testbed_prob <- function( compArgs, progressFields ) {
   quorum <- 100
   CC_threshold <- 0.75
   ER_threshold <- 0.7
-  partitionFactor <- 0.01
+  partitionFactor <- 0.9
   numthreads <- 4
 
   randVec <- list();
@@ -161,42 +161,41 @@ NPI_testbed_prob <- function( compArgs, progressFields ) {
           } # within time window
         } # yy >= 0
       } # for
-      keep_df <- data.frame() # "keepers" data.frame
       # Subsample to find the keepers
-      if ( nrow(cand_df) > 0 ) {
-        nbrKeepers <- 0
-        index <- 1
-        nCand <- nrow( cand_df )
-        rmVec <- c()
-        for ( idx in seq(1,nCand) ) {
-          if ( (nCand<quorum) | (nCand>=quorum & nbrKeepers<quorum) ) {
+      nbrKeepers <- 0
+      index <- 1
+      nCand <- nrow( cand_df )
+      keep_df <- data.frame() # "keepers" data.frame
+      if ( nCand < 2*quorum ) { # if nCand<quorum, select randomly across one pass
+        if ( nCand > 0 ) {
+          for ( idx in seq(1,nCand) ) {
             entry <- cand_df[idx,]
-            if ( entry$cc > runif(1) & entry$er > runif(1) ) {
-              if ( entry$x < 500 ) {
-                sprintf( "%d\t%d\t%f\t%f\n", entry$x, entry$y, entry$cc, entry$er );
-              }
+            if ( (entry$cc * entry$cc * entry$er) < runif(1) ) {
+              keep_df <- rbind( keep_df, entry )
+#              if ( entry$x < 500 ) {
+#                sprintf( "%d\t%d\t%f\t%f\n", entry$x, entry$y, entry$cc, entry$er );
+#              }
+            }
+          }
+        }
+      } else { # loop, selecting randomly until a quorum is reached
+        while ( nbrKeepers < quorum ) {
+          rmVec <- c()
+          for ( idx in seq(1,nCand) ) {
+            entry <- cand_df[idx,]
+            if ( (entry$cc * entry$cc * entry$er) < runif(1) ) {
               rmVec <- c( rmVec, idx )
               keep_df <- rbind( keep_df, entry )
               nbrKeepers <- nbrKeepers + 1
-            } # keep
-          } # need more
-        } # for
-        if ( length(rmVec) > 0 ) {
-          cand_df <- cand_df[ -rmVec, ]
-        }
-        # If available, has a quorum been selected? 
-        if ( nCand>=quorum & nbrKeepers<quorum) {
-          # Keep the best until quorum is reached
-          cand_df <- cand_df[ order(-cand_df$cc), ]
-          idx <- 1
-          while ( nbrKeepers < quorum & idx < nrow(cand_df) ) {
-            keep_df <- rbind( keep_df, cand_df[idx,])
-            nbrKeepers <- nbrKeepers + 1
-            idx <- idx + 1
+            }
           }
-        }          
-        global_df <- rbind( global_df, keep_df )
+          if ( length(rmVec) > 0 ) {
+            cand_df <- cand_df[ -rmVec, ]
+            nCand <- nrow( cand_df )
+          }
+        }
       } # nrow(cand_df) > 0
+      global_df <- rbind( global_df, keep_df )
     } # x
   } # blockNbr
   # Allocate the ancestorMap
@@ -235,7 +234,7 @@ NPI_testbed_prob <- function( compArgs, progressFields ) {
     # Build entire graph for this block of data
     keep_row <- which( global_df[,2] >= my_startCW_t & global_df[,1] <= my_stop_t)
     g <- graph.data.frame( global_df[keep_row,1:2], directed=FALSE )
-    E(g)$weight <- global_df[keep_row,3]
+    E(g)$weight <- global_df[keep_row,3] * global_df[keep_row,4]
     
     # Find the target times for this graph
     all_times <- as.numeric( V(g)$name )
@@ -245,6 +244,9 @@ NPI_testbed_prob <- function( compArgs, progressFields ) {
     # Loop on rows
     quorumQueue <- vector()
     for ( target_time in target_times ) {
+      if ( target_time == 1461 | target_time == 1766 ) {
+        print( "stop" )
+      }
       # Sub-graph
       idxs <- which( all_times >= (target_time-CW) & all_times <= target_time )
       if ( length(idxs) < quorum ) {
@@ -253,7 +255,7 @@ NPI_testbed_prob <- function( compArgs, progressFields ) {
         sg <- induced.subgraph(graph=g,vids=idxs)
         # Partition
 #        partition <- leiden(sg,resolution_parameter=partitionFactor,n_iterations=-1)
-        partition <- leiden(sg)
+        partition <- leiden(sg,resolution_parameter=partitionFactor,weights=E(sg)$weight)
         
         if ( length(quorumQueue) >0 ) { # process the queue
 #          if ( my_id == 1 ) { # add on those events during the initial CW
@@ -270,6 +272,7 @@ NPI_testbed_prob <- function( compArgs, progressFields ) {
             
             # Ancestor
             ancestorsIdx <- which( (partition==clik) & (as.numeric(V(sg)$name)<qt) )
+#            print( unlist(teacherClass[as.numeric(V(sg)$name[ancestorsIdx])]) )
             if ( length( ancestorsIdx) == 0 ) {
               ancestorMap[ qt ] <- list('')
             } else {
@@ -281,6 +284,8 @@ NPI_testbed_prob <- function( compArgs, progressFields ) {
         # Process this targetTime
         clik <- partition[ which( as.numeric(V(sg)$name) == target_time ) ]
         ancestorsIdx <- which( (partition==clik) & (as.numeric(V(sg)$name) < target_time) )
+#        print( teacherClass[target_time] )
+#        print( unlist(teacherClass[as.numeric(V(sg)$name[ancestorsIdx])]) )
         if ( length( ancestorsIdx) == 0 ) {
           ancestorMap[ target_time ] <- list('')
         } else {
@@ -301,6 +306,7 @@ NPI_testbed_prob <- function( compArgs, progressFields ) {
   latest_class = 1
   global_class <- hashmap()
   for ( target_time in ta ) {
+    teacherOfTarget <- teacherClass[target_time]
     L <- ancestorMap[ target_time][[1]]
     if ( nchar(L[1])==0 ) {
       new_class <- latest_class
@@ -308,10 +314,12 @@ NPI_testbed_prob <- function( compArgs, progressFields ) {
     } else {
       GC <- as.numeric( global_class[L] )
       GC_teacher <- as.numeric( teacherClass[L] )
-      print( GC )
-      print( GC_teacher )
+#      print( GC )
+#      print( GC_teacher )
       ant <- table( GC )
       new_class <- as.numeric( names( which( ant == max(ant) ) ) )
+    }
+    if ( teacherOfTarget == 1 ) {
       print( paste0( "target_time: ", target_time, " GC: ", new_class, " TC: ", teacherClass[target_time]))
     }
     global_class[ target_time ] <- new_class
@@ -319,7 +327,20 @@ NPI_testbed_prob <- function( compArgs, progressFields ) {
     
   
   # Tabulate
-  
+  unique_teachers <- unique( as.numeric( values(teacherClass) ) )
+  final_teacher <- hashmap()
+  for ( target_time in ta ) {
+    tc <- teacherClass[target_time][[1]]
+    if ( final_teacher %has_key% tc ) {
+      final_teacher[tc] <- list( c( unlist(final_teacher[tc]), as.numeric(global_class[target_time])) )
+    } else {
+      final_teacher[tc] <- list(global_class[target_time][[1]])
+    }
+  }
+  for ( this_teacher in unique_teachers ) {
+    ttb <- table( final_teacher[this_teacher] )
+    print( as.numeric( ttb ) )
+  }  
   
 }
 
