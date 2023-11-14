@@ -18,7 +18,7 @@ NPI_testbed_prob <- function( compArgs, progressFields ) {
   quorum <- 100
   CC_threshold <- 0.75
   ER_threshold <- 0.7
-  partitionFactor <- 0.9
+  partitionFactor <- 1
   numthreads <- 4
 
   randVec <- list();
@@ -162,7 +162,6 @@ NPI_testbed_prob <- function( compArgs, progressFields ) {
         } # yy >= 0
       } # for
       # Subsample to find the keepers
-      nbrKeepers <- 0
       index <- 1
       nCand <- nrow( cand_df )
       keep_df <- data.frame() # "keepers" data.frame
@@ -170,7 +169,7 @@ NPI_testbed_prob <- function( compArgs, progressFields ) {
         if ( nCand > 0 ) {
           for ( idx in seq(1,nCand) ) {
             entry <- cand_df[idx,]
-            if ( (entry$cc * entry$cc * entry$er) < runif(1) ) {
+            if ( (entry$cc * entry$cc * entry$er) > runif(1) ) {
               keep_df <- rbind( keep_df, entry )
 #              if ( entry$x < 500 ) {
 #                sprintf( "%d\t%d\t%f\t%f\n", entry$x, entry$y, entry$cc, entry$er );
@@ -179,11 +178,13 @@ NPI_testbed_prob <- function( compArgs, progressFields ) {
           }
         }
       } else { # loop, selecting randomly until a quorum is reached
+        nbrKeepers <- 0
         while ( nbrKeepers < quorum ) {
           rmVec <- c()
+          nCand <- nrow( cand_df )
           for ( idx in seq(1,nCand) ) {
             entry <- cand_df[idx,]
-            if ( (entry$cc * entry$cc * entry$er) < runif(1) ) {
+            if ( (entry$cc * entry$cc * entry$er) > runif(1) ) {
               rmVec <- c( rmVec, idx )
               keep_df <- rbind( keep_df, entry )
               nbrKeepers <- nbrKeepers + 1
@@ -191,7 +192,6 @@ NPI_testbed_prob <- function( compArgs, progressFields ) {
           }
           if ( length(rmVec) > 0 ) {
             cand_df <- cand_df[ -rmVec, ]
-            nCand <- nrow( cand_df )
           }
         }
       } # nrow(cand_df) > 0
@@ -222,8 +222,9 @@ NPI_testbed_prob <- function( compArgs, progressFields ) {
     print( paste0( "Working on ", my_start, " to ", my_stop ) )
   
     # Find the limits of the CW
-    my_startCW <- max( which( ta <= (my_start_t - CW) ) )
-    if ( my_startCW >= ta[1] ) {
+    my_idx <- which( ta <= (my_start_t - CW) )
+    if ( length(my_idx) > 0 ) {
+      my_startCW <- max( max(), 1 )
       my_startCW_t <- ta[ my_startCW ]
     } else {
       my_startCW <- 1
@@ -244,9 +245,6 @@ NPI_testbed_prob <- function( compArgs, progressFields ) {
     # Loop on rows
     quorumQueue <- vector()
     for ( target_time in target_times ) {
-      if ( target_time == 1461 | target_time == 1766 ) {
-        print( "stop" )
-      }
       # Sub-graph
       idxs <- which( all_times >= (target_time-CW) & all_times <= target_time )
       if ( length(idxs) < quorum ) {
@@ -254,8 +252,9 @@ NPI_testbed_prob <- function( compArgs, progressFields ) {
       } else {
         sg <- induced.subgraph(graph=g,vids=idxs)
         # Partition
+        partition <- leiden(sg,resolution_parameter=partitionFactor,n_iterations=-1,weights=E(sg)$weight)
 #        partition <- leiden(sg,resolution_parameter=partitionFactor,n_iterations=-1)
-        partition <- leiden(sg,resolution_parameter=partitionFactor,weights=E(sg)$weight)
+#        partition <- leiden(sg)
         
         if ( length(quorumQueue) >0 ) { # process the queue
 #          if ( my_id == 1 ) { # add on those events during the initial CW
@@ -271,25 +270,25 @@ NPI_testbed_prob <- function( compArgs, progressFields ) {
             clik <- partition[ which( as.numeric(V(sg)$name) == qt ) ]
             
             # Ancestor
-            ancestorsIdx <- which( (partition==clik) & (as.numeric(V(sg)$name)<qt) )
-#            print( unlist(teacherClass[as.numeric(V(sg)$name[ancestorsIdx])]) )
-            if ( length( ancestorsIdx) == 0 ) {
+            graphIdx <- which( (partition==clik) & (as.numeric(V(sg)$name)<qt) )
+#            print( unlist(teacherClass[as.numeric(V(sg)$name[ancestorsIdx])] ) )
+            if ( length( graphIdx) == 0 ) {
               ancestorMap[ qt ] <- list('')
             } else {
-              ancestorMap[ qt ] <- list( as.numeric( V(sg)$name[ancestorsIdx]) )
+              ancestorMap[ qt ] <- list( as.numeric( V(sg)$name[graphIdx]) )
             }
           }          
           quorumQueue <- vector()
         }
         # Process this targetTime
         clik <- partition[ which( as.numeric(V(sg)$name) == target_time ) ]
-        ancestorsIdx <- which( (partition==clik) & (as.numeric(V(sg)$name) < target_time) )
+        graphIdx <- which( (partition==clik) & (as.numeric(V(sg)$name) < target_time) )
 #        print( teacherClass[target_time] )
 #        print( unlist(teacherClass[as.numeric(V(sg)$name[ancestorsIdx])]) )
-        if ( length( ancestorsIdx) == 0 ) {
+        if ( length( graphIdx) == 0 ) {
           ancestorMap[ target_time ] <- list('')
         } else {
-          ancestorMap[ target_time ] <- list( as.numeric( V(sg)$name[ancestorsIdx]) )
+          ancestorMap[ target_time ] <- list( as.numeric( V(sg)$name[graphIdx]) )
         }
       }
     }
@@ -314,16 +313,15 @@ NPI_testbed_prob <- function( compArgs, progressFields ) {
     } else {
       GC <- as.numeric( global_class[L] )
       GC_teacher <- as.numeric( teacherClass[L] )
-#      print( GC )
-#      print( GC_teacher )
-      ant <- table( GC )
+      print( global_class[L] )
+      print( GC_teacher )
+      ant <- table( unlist(global_class[L]) )
       new_class <- as.numeric( names( which( ant == max(ant) ) ) )
     }
-    if ( teacherOfTarget == 1 ) {
-      print( paste0( "target_time: ", target_time, " GC: ", new_class, " TC: ", teacherClass[target_time]))
-    }
+    print( paste0( "target_time: ", target_time, " GC: ", new_class, " TC: ", teacherClass[target_time]))
     global_class[ target_time ] <- new_class
   }
+  print( paste0( "Total number of classes: ", latest_class ) )
     
   
   # Tabulate
@@ -339,7 +337,7 @@ NPI_testbed_prob <- function( compArgs, progressFields ) {
   }
   for ( this_teacher in unique_teachers ) {
     ttb <- table( final_teacher[this_teacher] )
-    print( as.numeric( ttb ) )
+    print( ttb )
   }  
   
 }
