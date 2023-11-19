@@ -1,4 +1,4 @@
-NPI_testbed_prob <- function( compArgs, progressFields ) {
+NPI_testbed_prob_withSaves <- function( compArgs, progressFields ) {
   # Network Pattern Identifier
   #
   #' @export
@@ -6,7 +6,10 @@ NPI_testbed_prob <- function( compArgs, progressFields ) {
   library(leiden)
   library(leidenAlg)
   library(foreach)
-  library(r2r)
+  library(doParallel)
+  
+  source("~/Dropbox/Documents/Concepts/2021_11_19_NetworkPatternIdentifier/NPI/Analysis/NPI/R/pack.R")
+  source("~/Dropbox/Documents/Concepts/2021_11_19_NetworkPatternIdentifier/NPI/Analysis/NPI/R/unpack.R")
 
   # Parameters
   nrows <- 1600
@@ -18,12 +21,14 @@ NPI_testbed_prob <- function( compArgs, progressFields ) {
   quorum <- 100
   partitionFactor <- 1
   numthreads <- 4
-
+  cl <- makeCluster( numthreads )
+  registerDoParallel(cl)
+  
   randVec <- list();
   resultVector <- list();
   
   # Create toy data
-  if ( !file.exists( "matrix.data" ) ) {
+  if ( !file.exists( "NPItestbed.RData" ) ) {
     toyData <- rbind( c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
                       c(0,3,7,10,8,2,-3,-7,-11,-8,-4,1,5,9,3,0),
                       c(0,-3,-7,-10,-8,-2,3,7,11,8,4,-1,-5,-9,-3,0),
@@ -31,11 +36,11 @@ NPI_testbed_prob <- function( compArgs, progressFields ) {
                       c(0,-5,-10,-20,-28,-30,-26,-10,10,30,40,45,35,20,5,0),
                       c(0,10,45,60,25,-15,-55,-48,-10,-5,0,0,0,0,0,0) )
     Prob <- c(1,1,2,3,4,5,5,5,6,6,6);
-    Teacher <- c(0,0,0,1,2,3);
+    Teacher <- c(1,1,1,2,3,4);
     
     a <- matrix( nrow=nrows, ncol=ncols )
     ta <- vector( mode="integer", length=nrows)
-    teacherClass <- hashmap()
+    teacherDF <- data.frame()
     for ( i in seq(1,nrows) ) {
       if ( i==1 ) {
         ta[1] <- round( runif(1) * 20 );
@@ -43,17 +48,16 @@ NPI_testbed_prob <- function( compArgs, progressFields ) {
         ta[i] <- ta[i-1] + round( runif(1) * 20 ) + 5;
       }
       idx <- Prob[ sample(1:11,1) ];
-      teacherClass[ ta[i] ] <- Teacher[idx];
+      teacherDF <- rbind( teacherDF, data.frame( k=ta[i], v=Teacher[idx] ) );
       for ( j in seq( 1, ncols) ) {
         a[i,j] <- toyData[idx,j] + rnorm( 1, mean=0, sd=sd );
       }
     }
-    save( file="matrix.data", a, ta, teacherClass )  
+    save( file="NPItestbed.RData", a, ta, teacherDF )  
   }
   # Load toy data
-  load( file="matrix.data" )
+  load( file="NPItestbed.RData" )
   
-  if ( !file.exists( "/Users/markrbower/Dropbox/Documents/Concepts/2021_11_19_NetworkPatternIdentifier/NPI/Analysis/NPI/global_df.RData" ) ) {
   # Define processing block sizes
   nbrBlocks <- ((nrows-blockSize)/(blockSize/2)) + 1
   sum_X <- matrix(0,blockSize,maxSize)
@@ -65,8 +69,9 @@ NPI_testbed_prob <- function( compArgs, progressFields ) {
   cc <- matrix(0,blockSize,maxSize)
   er <- matrix(0,blockSize,maxSize)
   
-  # Loop on processing blocks to make "global_df"
-  global_df <- data.frame()
+  if ( !file.exists( "/Users/markrbower/Dropbox/Documents/Concepts/2021_11_19_NetworkPatternIdentifier/NPI/Analysis/NPI/globalDF.RData" ) ) {
+  # Loop on processing blocks to make "globalDF"
+  globalDF <- data.frame()
   for ( blockNbr in seq(0,(nbrBlocks-1)) ) {
     if ( blockNbr == 0 ) {
       blockOffset <-  0;
@@ -138,6 +143,7 @@ NPI_testbed_prob <- function( compArgs, progressFields ) {
     # Build vector
     print( paste0( "Building the vector"))
     for ( x in seq( (blockOffset+1),blockSize) ) {
+#      print( paste0(x) )
       nbrThisEvent <-  0;
       nbrLinks <- 0;
       cand_df <- data.frame() # "candidate" data.frame
@@ -157,6 +163,7 @@ NPI_testbed_prob <- function( compArgs, progressFields ) {
         } # yy >= 0
       } # for
       # Subsample to find the keepers
+#      print( "subsample" )
       index <- 1
       nCand <- nrow( cand_df )
       keep_df <- data.frame() # "keepers" data.frame
@@ -190,24 +197,30 @@ NPI_testbed_prob <- function( compArgs, progressFields ) {
           }
         }
       } # nrow(cand_df) > 0
-      global_df <- rbind( global_df, keep_df )
+#      print( paste0( "bind" ))
+      globalDF <- rbind( globalDF, keep_df )
     } # x
   } # blockNbr
-  # Allocate the ancestorMap
-  } # /Users/markrbower/Dropbox/Documents/Concepts/2021_11_19_NetworkPatternIdentifier/NPI/Analysis/NPI/global_df.RData exists
-  print( paste0( getwd() ) )
-  ancestorMap <- hashmap()
-
-  if ( file.exists( "/Users/markrbower/Dropbox/Documents/Concepts/2021_11_19_NetworkPatternIdentifier/NPI/Analysis/NPI/global_df.RData" ) ) {
-    load( file="/Users/markrbower/Dropbox/Documents/Concepts/2021_11_19_NetworkPatternIdentifier/NPI/Analysis/NPI/global_df.RData")
-  } else {
-    save( global_df, file="/Users/markrbower/Dropbox/Documents/Concepts/2021_11_19_NetworkPatternIdentifier/NPI/Analysis/NPI/global_df.RData")
   }
-  
-  if ( !file.exists( "/Users/markrbower/Dropbox/Documents/Concepts/2021_11_19_NetworkPatternIdentifier/NPI/Analysis/NPI/ancestorMap.RData" ) ) {
 
+if ( file.exists( "/Users/markrbower/Dropbox/Documents/Concepts/2021_11_19_NetworkPatternIdentifier/NPI/Analysis/NPI/globalDF.RData" ) ) {
+  load( file="/Users/markrbower/Dropbox/Documents/Concepts/2021_11_19_NetworkPatternIdentifier/NPI/Analysis/NPI/globalDF.RData")
+} else {
+  save( globalDF, file="/Users/markrbower/Dropbox/Documents/Concepts/2021_11_19_NetworkPatternIdentifier/NPI/Analysis/NPI/globalDF.RData")
+}
+
+if ( file.exists( "/Users/markrbower/Dropbox/Documents/Concepts/2021_11_19_NetworkPatternIdentifier/NPI/Analysis/NPI/ancestorDF.RData" ) ) {
+  load( file="/Users/markrbower/Dropbox/Documents/Concepts/2021_11_19_NetworkPatternIdentifier/NPI/Analysis/NPI/ancestorDF.RData")
+} else {
   # Process graphs (OMP) to make "ancestor_map"
+  ancestorDF <- data.frame()
   for ( my_id in seq(1:numthreads) ) {
+#  foreach ( my_id = 1:numthreads, .combine=rbind) %dopar% {
+    library(igraph)
+    library(leiden)
+    library(leidenAlg)
+    library(foreach)
+
     # Determine graph limits
     my_start <- ( nrows / numthreads ) * (my_id-1) + 1
     my_start_t <- ta[my_start]
@@ -228,9 +241,9 @@ NPI_testbed_prob <- function( compArgs, progressFields ) {
 
     # Find the result vectors in this graph
     # Build entire graph for this block of data
-    keep_row <- which( global_df[,2] >= my_startCW_t & global_df[,1] <= my_stop_t)
-    g <- graph.data.frame( global_df[keep_row,1:2], directed=FALSE )
-    E(g)$weight <- global_df[keep_row,3] * global_df[keep_row,4]
+    keep_row <- which( globalDF[,2] >= my_startCW_t & globalDF[,1] <= my_stop_t)
+    g <- graph.data.frame( globalDF[keep_row,1:2], directed=FALSE )
+    E(g)$weight <- globalDF[keep_row,3] * globalDF[keep_row,4]
     
     # Find the target times for this graph
     all_times <- as.numeric( V(g)$name )
@@ -266,75 +279,80 @@ NPI_testbed_prob <- function( compArgs, progressFields ) {
             
             # Ancestor
             graphIdx <- which( (partition==clik) & (as.numeric(V(sg)$name)<qt) )
-#            print( unlist(teacherClass[as.numeric(V(sg)$name[ancestorsIdx])] ) )
+            idx <- which( ta == qt )
             if ( length( graphIdx) == 0 ) {
-              ancestorMap[ qt ] <- list('')
+              ancestorDF <- rbind( ancestorDF, data.frame( k=qt, v=pack("") ) )
             } else {
-              ancestorMap[ qt ] <- list( as.numeric( V(sg)$name[graphIdx]) )
+              ancestorDF <- rbind( ancestorDF, data.frame( k=qt, v=pack( as.numeric( V(sg)$name[graphIdx]) ) ) )
             }
-          }          
+          }
           quorumQueue <- vector()
         }
         # Process this targetTime
         clik <- partition[ which( as.numeric(V(sg)$name) == target_time ) ]
         graphIdx <- which( (partition==clik) & (as.numeric(V(sg)$name) < target_time) )
-#        print( teacherClass[target_time] )
-#        print( unlist(teacherClass[as.numeric(V(sg)$name[ancestorsIdx])]) )
+        idx <- which( ta == target_time )
         if ( length( graphIdx) == 0 ) {
-          ancestorMap[ target_time ] <- list('')
+          ancestorDF <- rbind( ancestorDF, data.frame( k=target_time, v=pack("") ) )
         } else {
-          ancestorMap[ target_time ] <- list( as.numeric( V(sg)$name[graphIdx]) )
+          ancestorDF <- rbind( ancestorDF, data.frame( k=target_time, v=pack( as.numeric( V(sg)$name[graphIdx]) ) ) )
         }
       }
     }
   }
-  } # File check as to whether ancestorMap.RData exists
-  
-  if ( file.exists( "/Users/markrbower/Dropbox/Documents/Concepts/2021_11_19_NetworkPatternIdentifier/NPI/Analysis/NPI/ancestorMap.RData" ) ) {
-    load( file="/Users/markrbower/Dropbox/Documents/Concepts/2021_11_19_NetworkPatternIdentifier/NPI/Analysis/NPI/ancestorMap.RData")
-  } else {
-    save( ancestorMap, file="/Users/markrbower/Dropbox/Documents/Concepts/2021_11_19_NetworkPatternIdentifier/NPI/Analysis/NPI/ancestorMap.RData")
-  }
+  save( ancestorDF, file="/Users/markrbower/Dropbox/Documents/Concepts/2021_11_19_NetworkPatternIdentifier/NPI/Analysis/NPI/ancestorDF.RData")
+}
+
+  stopCluster(cl)
 
   # Assign global class
+  globalDF <- data.frame()
+  for ( i in 1:length(ta) ) {
+    globalDF <- rbind( globalDF, data.frame( k=ta[i], v=0 ) )
+  }
   latest_class = 1
-  global_class <- hashmap()
-  for ( target_time in ta ) {
-    teacherOfTarget <- teacherClass[target_time]
-    L <- ancestorMap[ target_time][[1]]
-    if ( nchar(L[1])==0 ) {
+  for ( i in 1:length(ta) ) {
+    target_time <- ta[i]
+    idx <- which( teacherDF$k == target_time )
+    teacherOfTarget <- teacherDF[idx,]$v
+    idx <- which( ancestorDF$k == target_time )
+    ancestors <- unpack( ancestorDF[idx,]$v )
+    if ( length(ancestors) == 0 ) {
       new_class <- latest_class
       latest_class <- latest_class + 1
     } else {
-      GC <- as.numeric( global_class[L] )
-      GC_teacher <- as.numeric( teacherClass[L] )
-#      print( global_class[L] )
-#      print( GC_teacher )
-      ant <- table( unlist(global_class[L]) )
+      ancestorsIdx <- c()
+      for ( ancestor in ancestors ) {
+        ancestorsIdx <- append( ancestorsIdx, which( globalDF$k == ancestor ) )
+      }
+      GC <- as.numeric( globalDF[ancestorsIdx,]$v )
+      ant <- table( GC )
       new_class <- as.numeric( names( which( ant == max(ant) ) ) )
     }
-#    print( paste0( "target_time: ", target_time, " GC: ", new_class, " TC: ", teacherClass[target_time]))
-    global_class[ target_time ] <- new_class
+    idx <- which( globalDF$k == target_time )
+    globalDF[ idx, ]$v <- new_class
   }
-  print( paste0( "Total number of classes: ", latest_class-1 ) )
-    
-  
+
   # Tabulate
-  unique_teachers <- unique( as.numeric( values(teacherClass) ) )
-  final_teacher <- hashmap()
-  for ( target_time in ta ) {
-    tc <- teacherClass[target_time][[1]]
-    if ( final_teacher %has_key% tc ) {
-      final_teacher[tc] <- list( c( unlist(final_teacher[tc]), as.numeric(global_class[target_time])) )
-    } else {
-      final_teacher[tc] <- list(global_class[target_time][[1]])
-    }
+  unique_teachers <- unique( teacherDF$v )
+  finalDF <- data.frame()
+  for ( i in 1:length(unique_teachers) ) {
+    finalDF <- rbind( finalDF, data.frame( k=i, v="" ) )
   }
-  for ( this_teacher in unique_teachers ) {
-    ttb <- table( final_teacher[this_teacher] )
+  for ( i in 1:length(ta) ) {
+    target_time <- ta[i]
+    idx <- which( teacherDF$k == target_time )
+    tc <- teacherDF[idx,]$v
+    idx <- which( teacherDF$k == target_time )
+    gc <- globalDF[idx,]$v
+    idx <- which( finalDF$k == tc )
+    finalDF[idx,]$v <- pack( append( unpack(finalDF[idx,]$v), gc) )
+  }
+  for ( idx in 1:length(unique_teachers) ) {
+    ttb <- table( unpack(finalDF[ idx, ]$v) )
     print( ttb )
   }  
   
-  return( global_class )
+  return( finalDF )
 }
 
