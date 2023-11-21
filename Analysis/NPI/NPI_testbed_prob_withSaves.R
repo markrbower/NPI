@@ -17,7 +17,7 @@ NPI_testbed_prob_withSaves <- function( compArgs, progressFields ) {
   sd <- 10.0
   blockSize <- 800;
   maxSize <- 750 	# 750*20 = 15,000 sec; 10x CW
-  CW <- 20000 	# 10000/20 = 500 inputs expected
+  CW <- 10000 	# 10000/20 = 500 inputs expected
   quorum <- 100
   partitionFactor <- 1
   numthreads <- 4
@@ -186,7 +186,7 @@ NPI_testbed_prob_withSaves <- function( compArgs, progressFields ) {
           nCand <- nrow( cand_df )
           for ( idx in seq(1,nCand) ) {
             entry <- cand_df[idx,]
-            if ( (entry$cc * entry$cc * entry$er) > runif(1) ) {
+            if ( (entry$cc * entry$cc * entry$cc * entry$er) > runif(1) ) {
               rmVec <- c( rmVec, idx )
               keep_df <- rbind( keep_df, entry )
               nbrKeepers <- nbrKeepers + 1
@@ -243,7 +243,7 @@ if ( file.exists( "/Users/markrbower/Dropbox/Documents/Concepts/2021_11_19_Netwo
     # Build entire graph for this block of data
     keep_row <- which( globalDF[,2] >= my_startCW_t & globalDF[,1] <= my_stop_t)
     g <- graph.data.frame( globalDF[keep_row,1:2], directed=FALSE )
-    E(g)$weight <- globalDF[keep_row,3] * globalDF[keep_row,4]
+    E(g)$weight <- globalDF[keep_row,3] * globalDF[keep_row,3] * globalDF[keep_row,3] * globalDF[keep_row,4]
     
     # Find the target times for this graph
     all_times <- as.numeric( V(g)$name )
@@ -315,6 +315,9 @@ if ( file.exists( "/Users/markrbower/Dropbox/Documents/Concepts/2021_11_19_Netwo
     target_time <- ta[i]
     idx <- which( teacherDF$k == target_time )
     teacherOfTarget <- teacherDF[idx,]$v
+    if ( teacherOfTarget == 2 ) {
+      print( paste0( new_class ) )
+    }
     idx <- which( ancestorDF$k == target_time )
     ancestors <- unpack( ancestorDF[idx,]$v )
     if ( length(ancestors) == 0 ) {
