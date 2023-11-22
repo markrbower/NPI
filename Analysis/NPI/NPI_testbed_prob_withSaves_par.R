@@ -1,4 +1,4 @@
-NPI_testbed_prob_withSaves <- function( compArgs, progressFields ) {
+NPI_testbed_prob_withSaves_par <- function( compArgs, progressFields ) {
   # Network Pattern Identifier
   #
   #' @export
@@ -210,18 +210,16 @@ if ( file.exists( "/Users/markrbower/Dropbox/Documents/Concepts/2021_11_19_Netwo
   save( assignedDF, file="/Users/markrbower/Dropbox/Documents/Concepts/2021_11_19_NetworkPatternIdentifier/NPI/Analysis/NPI/assignedDF.RData")
 }
 
-if ( file.exists( "/Users/markrbower/Dropbox/Documents/Concepts/2021_11_19_NetworkPatternIdentifier/NPI/Analysis/NPI/ancestorDF.RData" ) ) {
-  load( file="/Users/markrbower/Dropbox/Documents/Concepts/2021_11_19_NetworkPatternIdentifier/NPI/Analysis/NPI/ancestorDF.RData")
-} else {
   # Process graphs (OMP) to make "ancestor_map"
-  ancestorDF <- data.frame()
 #  for ( my_id in seq(1:numthreads) ) {
-  foreach ( my_id = 1:numthreads, .combine=rbind) %dopar% {
+  ancestorDF <- foreach ( my_id = 1:numthreads, .combine=rbind) %dopar% {
     library(igraph)
     library(leiden)
     library(leidenAlg)
     library(foreach)
     library(stringr)
+    
+    tmpDF <- data.frame()
     
     source("~/Dropbox/Documents/Concepts/2021_11_19_NetworkPatternIdentifier/NPI/Analysis/NPI/R/pack.R")
     source("~/Dropbox/Documents/Concepts/2021_11_19_NetworkPatternIdentifier/NPI/Analysis/NPI/R/unpack.R")
@@ -286,9 +284,9 @@ if ( file.exists( "/Users/markrbower/Dropbox/Documents/Concepts/2021_11_19_Netwo
             graphIdx <- which( (partition==clik) & (as.numeric(V(sg)$name)<qt) )
             idx <- which( ta == qt )
             if ( length( graphIdx) == 0 ) {
-              ancestorDF <- rbind( ancestorDF, data.frame( k=qt, v=pack("") ) )
+              tmpDF <- rbind( tmpDF, data.frame( k=qt, v=pack("") ) )
             } else {
-              ancestorDF <- rbind( ancestorDF, data.frame( k=qt, v=pack( as.numeric( V(sg)$name[graphIdx]) ) ) )
+              tmpDF <- rbind( tmpDF, data.frame( k=qt, v=pack( as.numeric( V(sg)$name[graphIdx]) ) ) )
             }
           }
           quorumQueue <- vector()
@@ -298,15 +296,14 @@ if ( file.exists( "/Users/markrbower/Dropbox/Documents/Concepts/2021_11_19_Netwo
         graphIdx <- which( (partition==clik) & (as.numeric(V(sg)$name) < target_time) )
         idx <- which( ta == target_time )
         if ( length( graphIdx) == 0 ) {
-          ancestorDF <- rbind( ancestorDF, data.frame( k=target_time, v=pack("") ) )
+          tmpDF <- rbind( tmpDF, data.frame( k=target_time, v=pack("") ) )
         } else {
-          ancestorDF <- rbind( ancestorDF, data.frame( k=target_time, v=pack( as.numeric( V(sg)$name[graphIdx]) ) ) )
+          tmpDF <- rbind( tmpDF, data.frame( k=target_time, v=pack( as.numeric( V(sg)$name[graphIdx]) ) ) )
         }
       }
     }
+    tmpDF
   }
-  save( ancestorDF, file="/Users/markrbower/Dropbox/Documents/Concepts/2021_11_19_NetworkPatternIdentifier/NPI/Analysis/NPI/ancestorDF.RData")
-}
 
   stopCluster(cl)
 

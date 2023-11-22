@@ -1,52 +1,51 @@
-NMI <- function( teacherMap, assignedMap ) {
-  # teacherMap: an r2r::hashmap
-  # assignedMap: an r2r::hashmap
+NMI <- function( teacherDF, assignedDF ) {
+  # teacherDF:  key-value data.frame
+  # assignedDF: key-value data.frame
   library(r2r)
   
   source("~/Dropbox/Documents/Concepts/2021_11_19_NetworkPatternIdentifier/NPI/Analysis/NPI/R/H.R")
   
   # Get the keys
-  teacherIdxs <- keys( teacherMap )
-  assignedIdxs <- keys( assignedMap )
+  teacherIdxs <- teacherDF$v
+  assignedIdxs <- assignedDF$v
   
   # Compute HofT
   HofT <- 0.0;
-  tcounts <- hashmap()
-  for ( i in 1:length(teacherIdxs) ) {
-    tc =  as.numeric(unlist(teacherMap[ teacherIdxs[i] ]))
-#    print( paste0( "tc: ", tc ) )
-    if ( has_key( tcounts, tc ) ) {
-      tcounts[tc] <- unlist(tcounts[tc]) + 1
-    } else {
-      tcounts[tc] <- 1
-    }
+  tcounts <- data.frame()
+  uniqueTeacherIdxs <- unique( teacherIdxs )
+  for ( i in 1:length(uniqueTeacherIdxs) ) {
+    tcounts <- rbind( tcounts, data.frame( k=uniqueTeacherIdxs[i], v=0 ) )    
   }
-  Nteachers <- length(tcounts);
+  for ( i in 1:length(teacherIdxs) ) {
+    tc =  as.numeric(teacherDF$v[ i ])
+    idx <- which( tcounts$k == tc )
+    tcounts$v[idx] <- tcounts$v[idx] + 1
+  }
+  Nteachers <- nrow(tcounts);
   for ( i in 1:Nteachers ) {
     i <- as.numeric(i)
-    pH = as.numeric(unlist(tcounts[ i ])) / length(teacherMap);
+    pH = as.numeric(tcounts$v[ i ]) / nrow(teacherDF);
     HofT <- HofT + H(pH)
   }
   
   # Compute HofC
   HofC = 0.0;
-  acounts <- hashmap()
-  for ( i in 1:length(assignedMap) ) {
-    cc =  as.numeric(unlist(assignedMap[ assignedIdxs[i] ]))
-#    print( paste0( "cc: ", cc ) )
-    if ( has_key( acounts, cc ) ) {
-      acounts[cc] <- unlist(acounts[cc]) + 1
-    } else {
-      acounts[cc] <- 1
-    }
+  acounts <- data.frame()
+  uniqueAssignedIdxs <- unique( assignedIdxs )
+  for ( i in 1:length(uniqueAssignedIdxs) ) {
+    acounts <- rbind( acounts, data.frame( k=uniqueAssignedIdxs[i], v=0 ) )    
   }
-  Nclusters = length( acounts );
+  for ( i in 1:nrow(assignedDF) ) {
+    ac =  as.numeric(assignedDF$v[ i ])
+    idx <- which( acounts$k == ac )
+    acounts$v[idx] <- acounts$v[idx] + 1
+  }
+  Nclusters = nrow( acounts );
 
   # Compute PofC
   PofC <- vector()
   for ( i in 1:Nclusters ) {
-    i <- as.numeric(i)
-    pC <- as.numeric(unlist(acounts[i])) / length(assignedMap)
+    pC <- as.numeric(acounts$v[i]) / nrow(assignedDF)
 #    print( paste0( "pC: ", pC ) )
     PofC <- append( PofC, pC )
     HofC <- HofC + H( pC )
@@ -55,11 +54,11 @@ NMI <- function( teacherMap, assignedMap ) {
   # PofTgivenC
 #  print( paste0( "nT: ", Nteachers, "\tnC: ", Nclusters ) )
   PofTgivenC <- matrix( 0, Nteachers, Nclusters )
-  for ( i in 1:length(teacherMap) ) {
-    tc = as.numeric(unlist(teacherMap[teacherIdxs[i]])) + 1
-    cc = as.numeric(unlist(assignedMap[assignedIdxs[i]]))
-#    print( paste0( "tc: ", tc, "\tcc: ", cc ) )
-    PofTgivenC[ tc, cc ] <- PofTgivenC[ tc, cc ] + 1
+  for ( i in 1:nrow(teacherDF) ) {
+    tc <- as.numeric(teacherDF$v[ i ])
+    ac <- as.numeric(assignedDF$v[ i ])
+    #    print( paste0( "tc: ", tc, "\tcc: ", cc ) )
+    PofTgivenC[ tc, ac ] <- PofTgivenC[ tc, ac ] + 1
   }
 
   # Normalize
