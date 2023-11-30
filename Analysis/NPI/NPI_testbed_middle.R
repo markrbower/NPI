@@ -1,4 +1,4 @@
-NPI_testbed_prob_par <- function() {
+NPI_testbed_middle <- function() {
   # Network Pattern Identifier
   #
   #' @export
@@ -13,13 +13,13 @@ NPI_testbed_prob_par <- function() {
   source("~/Dropbox/Documents/Concepts/2021_11_19_NetworkPatternIdentifier/NPI/Analysis/NPI/NMI.R")
 
   # Parameters
-  nrows <- 2000
+  nSamples <- 2000
   ncols <- 16
   sd <- 10.0
   blockSize <- 1000;
   maxSize <- 1000 	# 1000*20 = 20,000 sec; 2x CW
-  CW <- 10000 	# 10000/20 = 500 inputs expected
-  quorum <- 100
+  CW <- 2000 	# 5000/20 = 250 inputs expected
+  CWchunks <- 5
   partitionFactor <- 1
   numthreads <- 4
   cl <- makeCluster( numthreads )
@@ -36,14 +36,14 @@ NPI_testbed_prob_par <- function() {
                       c(0,5,10,20,28,30,26,10,-10,-30,-40,-45,-35,-20,-5,0),
                       c(0,-5,-10,-20,-28,-30,-26,-10,10,30,40,45,35,20,5,0),
                       c(0,10,45,60,25,-15,-55,-48,-10,-5,0,0,0,0,0,0),
-                      c(0,0,0,0,50,50,50,50,-50,-50,-50,-50,0,0,0,0))
+                      c(0,0,0,0,100,100,100,100,-100,-100,-100,-100,0,0,0,0))
     Prob <- c(1,1,2,3,4,5,5,5,6,6,6);
     Teacher <- c(1,1,1,2,3,4,5);
     
-    a <- matrix( nrow=nrows, ncol=ncols )
-    ta <- vector( mode="integer", length=nrows)
+    a <- matrix( nrow=nSamples, ncol=ncols )
+    ta <- vector( mode="integer", length=nSamples)
     teacherDF <- data.frame()
-    for ( i in seq(1,nrows) ) {
+    for ( i in seq(1,nSamples) ) {
       if ( i==1 ) {
         ta[1] <- round( runif(1) * 20 );
       } else {
@@ -56,19 +56,22 @@ NPI_testbed_prob_par <- function() {
       }
     }
     # Replace some events with artifact
-    for ( i in seq(1000,1020) ) {
-      for ( j in seq( 1, ncols) ) {
-        a[i,j] <- toyData[7,j] + rnorm( 1, mean=0, sd=sd );
-      }
-    }
+#    for ( i in seq(1000,1020) ) {
+#      teacherDF$v[i] <- Teacher[7]
+#      for ( j in seq( 1, ncols) ) {
+#        a[i,j] <- toyData[7,j] + rnorm( 1, mean=0, sd=sd );
+#      }
+#    }
     
     save( file="NPItestbed.RData", a, ta, teacherDF )  
   }
   # Load toy data
   load( file="NPItestbed.RData" )
   
+  if ( !file.exists("window.RData") ) {
+  
   # Define processing block sizes
-  nbrBlocks <- ((nrows-blockSize)/(blockSize/2)) + 1
+  nbrBlocks <- ((nSamples-blockSize)/(blockSize/2)) + 1
   sum_X <- matrix(0,blockSize,maxSize)
   sum_Y <- matrix(0,blockSize,maxSize)
   sum_XY <- matrix(0,blockSize,maxSize)
@@ -173,45 +176,59 @@ NPI_testbed_prob_par <- function() {
 #      print( "subsample" )
       index <- 1
       nCand <- nrow( cand_df )
-      keep_df <- data.frame() # "keepers" data.frame
-      if ( nCand < 2*quorum ) { # if nCand<quorum, select randomly across one pass
-        if ( nCand > 0 ) {
-          for ( idx in seq(1,nCand) ) {
-            entry <- cand_df[idx,]
-            if ( (entry$cc * entry$cc * entry$er) > runif(1) ) {
-              keep_df <- rbind( keep_df, entry )
-#              if ( entry$x < 500 ) {
-#                sprintf( "%d\t%d\t%f\t%f\n", entry$x, entry$y, entry$cc, entry$er );
-#              }
-            }
+      if ( nCand >= 1 ) {
+        keep_df <- data.frame()
+        for ( idx in seq(1,nCand) ) {
+          entry <- cand_df[idx,]
+          if ( (entry$cc * entry$cc * entry$er) > runif(1) ) {
+            keep_df <- rbind( keep_df, entry )
           }
         }
-      } else { # loop, selecting randomly until a quorum is reached
-        nbrKeepers <- 0
-        while ( nbrKeepers < quorum ) {
-          rmVec <- c()
-          nCand <- nrow( cand_df )
-          for ( idx in seq(1,nCand) ) {
-            entry <- cand_df[idx,]
-            if ( (entry$cc * entry$cc * entry$cc * entry$er) > runif(1) ) {
-              rmVec <- c( rmVec, idx )
-              keep_df <- rbind( keep_df, entry )
-              nbrKeepers <- nbrKeepers + 1
-            }
-          }
-          if ( length(rmVec) > 0 ) {
-            cand_df <- cand_df[ -rmVec, ]
-          }
+        if ( nrow(keep_df) > 0 ) {
+          assignedDF <- rbind( assignedDF, keep_df )
         }
-      } # nrow(cand_df) > 0
-#      print( paste0( "bind" ))
-      assignedDF <- rbind( assignedDF, keep_df )
+      }
     } # x
   } # blockNbr
+    print( paste0( "saving"))
+    save( ta, teacherDF, assignedDF, file="window.RData" )
+    print( paste0( "saved"))
+  } else {
+    load( file="window.RData" )
+  }
+  
+  # Compute the bounds for each processing block
+  blockData <- data.frame()
+  blockIdxStart <- 1
+  processIdxStart <- 1
+  endNotReached <- TRUE
+  blockNbr <- 0
+  while ( endNotReached ) {
+    blockNbr <- blockNbr + 1
+    blockTimeStart <- ta[blockIdxStart]
+    blockTimeStop <- blockTimeStart + CWchunks * CW
+    if ( blockTimeStop >= ta[nSamples] ) {
+      blockTimeStop <- ta[nSamples]
+      blockIdxStop <- nSamples
+      processIdxStop <- nSamples
+      endNotReached <- FALSE
+    } else {
+      blockIdxStop <- max( which( ta <=  blockTimeStop ) )
+      processIdxStop <- max( which( ta < (blockTimeStop-CW) ) )
+    }
+    blockData <- rbind( blockData, data.frame( blockNbr=blockNbr, blockIdxStart=blockIdxStart, blockIdxStop=blockIdxStop, processIdxStart=processIdxStart, processIdxStop=processIdxStop) )
+    # Prepare for the next block
+    processIdxStart <- processIdxStop + 1
+    blockIdxStart <- max( max( which( ta < (ta[processIdxStart]-CW) ) ), 1 )
+  }
+  
+  print( blockData )
 
-  # Process graphs (OMP) to make "ancestor_map"
-#  for ( my_id in seq(1:numthreads) ) {
-  ancestorDF <- foreach ( my_id = 1:numthreads, .combine=rbind) %dopar% {
+#  tmpProcessed <- vector()
+# Process graphs (OMP) to make "ancestor_map"
+  
+#  for ( my_id in seq(1:nrow(blockData)) ) {
+  ancestorDF <- foreach ( my_id = 1:nrow(blockData), .combine=rbind) %dopar% {
     library(igraph)
     library(leiden)
     library(leidenAlg)
@@ -224,87 +241,57 @@ NPI_testbed_prob_par <- function() {
     source("~/Dropbox/Documents/Concepts/2021_11_19_NetworkPatternIdentifier/NPI/Analysis/NPI/R/unpack.R")
 
     # Determine graph limits
-    my_start <- ( nrows / numthreads ) * (my_id-1) + 1
+    my_start <- blockData$processIdxStart[my_id]
     my_start_t <- ta[my_start]
-    my_stop  <- ((nrows / numthreads) * my_id)
+    my_stop  <- blockData$processIdxStop[my_id]
     my_stop_t <- ta[my_stop]
     my_cnt <- my_stop - my_start + 1
     print( paste0( "Working on ", my_start, " to ", my_stop ) )
   
     # Find the limits of the CW
-    my_idx <- which( ta <= (my_start_t - CW) )
-    if ( length(my_idx) > 0 ) {
-      my_startCW <- max( max(), 1 )
-      my_startCW_t <- ta[ my_startCW ]
-    } else {
-      my_startCW <- 1
-      my_startCW_t <- ta[1]
-    }
-
+    my_startCW <- blockData$blockIdxStart[my_id]
+    my_startCW_t <- ta[ my_startCW ]
+    my_stopCW <- blockData$blockIdxStop[my_id]
+    my_stopCW_t <- ta[ my_stopCW ]
+    
     # Find the result vectors in this graph
     # Build entire graph for this block of data
-    keep_row <- which( assignedDF[,2] >= my_startCW_t & assignedDF[,1] <= my_stop_t)
+    keep_row <- which( assignedDF[,2] >= my_startCW_t & assignedDF[,1] <= my_stopCW_t)
     g <- graph.data.frame( assignedDF[keep_row,1:2], directed=FALSE )
-    E(g)$weight <- assignedDF[keep_row,3] * assignedDF[keep_row,3] * assignedDF[keep_row,3] * assignedDF[keep_row,4]
+    E(g)$weight <- assignedDF[keep_row,3] * assignedDF[keep_row,3] * assignedDF[keep_row,4]
     
     # Find the target times for this graph
     all_times <- as.numeric( V(g)$name )
-    target_idx <- which( ta >= my_start_t & ta <= my_stop_t)
-    target_times <- ta[ target_idx ]
+    processIdx <- which( ta >= my_start_t & ta <= my_stop_t)
+    processTimes <- ta[ processIdx ]
 
     # Loop on rows
-    quorumQueue <- vector()
-    for ( target_time in target_times ) {
+    for ( processTime in processTimes ) {
+#      if ( processTime == 14614 | processTime == 14634 ) {
+#        print( paste0( "stop" ) )
+#      }
+#      tmpProcessed <- append( tmpProcessed, processTime )
       # Sub-graph
-      idxs <- which( all_times >= (target_time-CW) & all_times <= target_time )
-      if ( length(idxs) < quorum ) {
-        quorumQueue <- append( quorumQueue, target_time )
+      vids <- which( all_times>=(processTime-CW) & all_times<=(processTime+CW))
+      sg <- induced.subgraph(graph=g,vids=vids)
+      # Partition
+      partition <- leiden(sg,resolution_parameter=partitionFactor,n_iterations=-1,weights=E(sg)$weight)
+      # Process this processTime
+      clik <- partition[ which( as.numeric(V(sg)$name) == processTime ) ]
+      graphIdx <- which((partition==clik) & (as.numeric(V(sg)$name)<processTime) )
+      if ( length( graphIdx) == 0 ) {
+        tmpDF <- rbind( tmpDF, data.frame( k=processTime, v=pack("") ) )
       } else {
-        sg <- induced.subgraph(graph=g,vids=idxs)
-        # Partition
-        partition <- leiden(sg,resolution_parameter=partitionFactor,n_iterations=-1,weights=E(sg)$weight)
-#        partition <- leiden(sg,resolution_parameter=partitionFactor,n_iterations=-1)
-#        partition <- leiden(sg)
-        
-        if ( length(quorumQueue) >0 ) { # process the queue
-#          if ( my_id == 1 ) { # add on those events during the initial CW
-#            CW_idx <- which( ta >= my_startCW_t & ta < my_start_t)
-#            CW_times <- ta[ CW_idx ]
-#            for ( CW_time in CW_times ) {
-#              quorumQueue <- append( quorumQueue, CW_time )
-#            }
-#            quorumQueue <- sort( quorumQueue )
-#          }
-          quorumQueue <- sort( quorumQueue )
-          for ( qt in quorumQueue ) {
-            clik <- partition[ which( as.numeric(V(sg)$name) == qt ) ]
-            
-            # Ancestor
-            graphIdx <- which( (partition==clik) & (as.numeric(V(sg)$name)<qt) )
-            idx <- which( ta == qt )
-            if ( length( graphIdx) == 0 ) {
-              tmpDF <- rbind( tmpDF, data.frame( k=qt, v=pack("") ) )
-            } else {
-              tmpDF <- rbind( tmpDF, data.frame( k=qt, v=pack( as.numeric( V(sg)$name[graphIdx]) ) ) )
-            }
-          }
-          quorumQueue <- vector()
-        }
-        # Process this targetTime
-        clik <- partition[ which( as.numeric(V(sg)$name) == target_time ) ]
-        graphIdx <- which( (partition==clik) & (as.numeric(V(sg)$name) < target_time) )
-        idx <- which( ta == target_time )
-        if ( length( graphIdx) == 0 ) {
-          tmpDF <- rbind( tmpDF, data.frame( k=target_time, v=pack("") ) )
-        } else {
-          tmpDF <- rbind( tmpDF, data.frame( k=target_time, v=pack( as.numeric( V(sg)$name[graphIdx]) ) ) )
-        }
+        tmpDF <- rbind( tmpDF, data.frame( k=processTime, v=pack( as.numeric( V(sg)$name[graphIdx]) ) ) )
       }
     }
     tmpDF
   }
 
   stopCluster(cl)
+  ancestorDF <- ancestorDF[ order(ancestorDF$k),]
+  
+#  print( setdiff( ta, tmpProcessed ) )
 
   # Assign global class
   assignedDF <- data.frame()

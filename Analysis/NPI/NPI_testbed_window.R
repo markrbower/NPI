@@ -1,4 +1,4 @@
-NPI_testbed_prob_par <- function() {
+NPI_testbed_window <- function() {
   # Network Pattern Identifier
   #
   #' @export
