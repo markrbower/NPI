@@ -1,4 +1,4 @@
-NPI_testbed_middle <- function() {
+NPI_testbed_drift <- function() {
   # Network Pattern Identifier
   #
   #' @export
@@ -29,7 +29,7 @@ NPI_testbed_middle <- function() {
   resultVector <- list();
   
   # Create toy data
-  if ( !file.exists( "NPItestbed.RData" ) ) {
+  if ( !file.exists( "NPItestbed_drift.RData" ) ) {
     toyData <- rbind( c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
                       c(0,3,7,10,8,2,-3,-7,-11,-8,-4,1,5,9,3,0),
                       c(0,-3,-7,-10,-8,-2,3,7,11,8,4,-1,-5,-9,-3,0),
@@ -52,23 +52,28 @@ NPI_testbed_middle <- function() {
       idx <- Prob[ sample(1:11,1) ];
       teacherDF <- rbind( teacherDF, data.frame( k=ta[i], v=Teacher[idx] ) );
       for ( j in seq( 1, ncols) ) {
-        a[i,j] <- toyData[idx,j] + rnorm( 1, mean=0, sd=sd );
+        if ( (Teacher[idx]==4) & (i > (nSamples/2)) ) { # Drift class 4 towards class 2
+          a[i,j] <- toyData[4,j] - (toyData[4,j]-toyData[2,j])*(i-(nSamples/2))/(nSamples) + rnorm( 1, mean=0, sd=sd );
+        } else {
+          a[i,j] <- toyData[idx,j] + rnorm( 1, mean=0, sd=sd );
+        }
       }
     }
     # Replace some events with artifact
-    for ( i in seq(1000,1020) ) {
+    ns <- round( nSamples / 2 )
+    for ( i in seq(ns,(ns+20)) ) {
       teacherDF$v[i] <- Teacher[7]
       for ( j in seq( 1, ncols) ) {
         a[i,j] <- toyData[7,j] + rnorm( 1, mean=0, sd=sd );
       }
     }
-    
-    save( file="NPItestbed.RData", a, ta, teacherDF )  
+
+    save( file="NPItestbed_drift.RData", a, ta, teacherDF )  
   }
   # Load toy data
-  load( file="NPItestbed.RData" )
+  load( file="NPItestbed_drift.RData" )
   
-  if ( !file.exists("window.RData") ) {
+  if ( !file.exists("window_drift.RData") ) {
   
   # Define processing block sizes
   nbrBlocks <- ((nSamples-blockSize)/(blockSize/2)) + 1
@@ -191,10 +196,10 @@ NPI_testbed_middle <- function() {
     } # x
   } # blockNbr
     print( paste0( "saving"))
-    save( ta, teacherDF, assignedDF, file="window.RData" )
+    save( ta, teacherDF, assignedDF, file="window_drift.RData" )
     print( paste0( "saved"))
   } else {
-    load( file="window.RData" )
+    load( file="window_drift.RData" )
   }
   
   # Compute the bounds for each processing block
@@ -341,6 +346,9 @@ NPI_testbed_middle <- function() {
     ttb <- table( unpack(groupedByTeacherDF[ idx, ]$v) )
     print( ttb )
   }
+  
+  nmi <- NMI( teacherDF, assignedDF )
+  print( paste0( "NMI: ", nmi ) )
   
   nmi <- NMI( teacherDF, assignedDF )
   print( paste0( "NPI: ", nmi ) )
